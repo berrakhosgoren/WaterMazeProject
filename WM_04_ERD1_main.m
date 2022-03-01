@@ -80,46 +80,28 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc] = WM_04_ERD1_main(
         % take the average across trials 
         
         % encoding epochs:
-        
-        % iterate over encoding epochs
-        for e = 1:18 % there are 18 epochs in a session in total                   
-            for eloc = 1:128  % iterate over electrodes
-                if session_idx == 1
-                    encoding_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,encoding_epochs(e)), 3);      
-                else
-                    encoding_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,encoding_epochs(e)), 3);   
-                end         
-            end    
-        end   
+        if session_idx == 1
+            encoding_avg_MoBI = mean(epochedEEG.data(:,:,encoding_epochs), 3);
+        else
+            encoding_avg_Desk = mean(epochedEEG.data(:,:,encoding_epochs), 3);
+        end    
         
         
         % retrieval epochs:
-        
-        % iterate over retrieval epochs
-        for r = 1:24 % there are 24 epochs in a session in total
-            for eloc = 1:128 % iterate over electrodes     
-                if session_idx == 1
-                    retrieval_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,retrieval_epochs(r)), 3);       
-                else
-                    retrieval_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,retrieval_epochs(r)), 3);     
-                end               
-            end
-        end   
-        
+        if session_idx == 1
+            retrieval_avg_MoBI = mean(epochedEEG.data(:,:,retrieval_epochs), 3);       
+        else
+            retrieval_avg_Desk = mean(epochedEEG.data(:,:,retrieval_epochs), 3);     
+        end               
+
         
         % baseline epochs:
-        
-        % iterate over baseline epochs
-        for b = 1:numel(baseline_epochs)
-            for eloc = 1:128 % iterate over electrodes  
-                if session_idx == 1
-                    baseline_avg_MoBI(eloc,:) = mean(epochedEEG_baseline.data(eloc,:,baseline_epochs(b)), 3);       
-                else
-                    baseline_avg_Desk(eloc,:) = mean(epochedEEG_baseline.data(eloc,:,baseline_epochs(b)), 3);     
-                end            
-            end
-        end   
-        
+        if session_idx == 1
+            baseline_avg_MoBI = mean(epochedEEG_baseline.data(:,:,baseline_epochs), 3);       
+        else
+            baseline_avg_Desk = mean(epochedEEG_baseline.data(:,:,baseline_epochs), 3);
+        end    
+
         
         %----------------------------------------------------------
         % Compute point-to-point intertrial variance 

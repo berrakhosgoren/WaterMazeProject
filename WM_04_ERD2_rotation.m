@@ -84,48 +84,35 @@ function [rotation_var_fm, rotation_var_allEloc] = WM_04_ERD2_rotation(epochedEE
         % take the average across trials
         
         % 0 rotation 
-        for x = 1:numel(ep_0)
-            for eloc = 1:128
-                if session_idx == 1
-                    rot0_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,ep_0(x)), 3);
-                else
-                    rot0_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,ep_0(x)), 3);   
-                end    
-            end
-        end
+        if session_idx == 1
+            rot0_avg_MoBI = mean(epochedEEG.data(:,:,ep_0), 3);
+        else
+            rot0_avg_Desk = mean(epochedEEG.data(:,:,ep_0), 3);   
+        end    
+
         
         % 90 rotation 
-        for y = 1:numel(ep_90)
-            for eloc = 1:128
-                if session_idx == 1
-                    rot90_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,ep_90(y)), 3);
-                else
-                    rot90_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,ep_90(y)), 3);   
-                end    
-            end
-        end
+        if session_idx == 1
+            rot90_avg_MoBI = mean(epochedEEG.data(:,:,ep_90), 3);
+        else
+            rot90_avg_Desk = mean(epochedEEG.data(:,:,ep_90), 3);
+        end    
+
         
         % 180 rotation 
-        for z = 1:numel(ep_180)
-            for eloc = 1:128
-                if session_idx == 1
-                    rot180_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,ep_180(z)), 3);
-                else
-                    rot180_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,ep_180(z)), 3);   
-                end    
-            end
-        end
+        if session_idx == 1
+            rot180_avg_MoBI = mean(epochedEEG.data(:,:,ep_180), 3);
+        else
+            rot180_avg_Desk = mean(epochedEEG.data(:,:,ep_180), 3);
+        end    
+        
         
         % 270 rotation 
-        for q = 1:numel(ep_270)
-            for eloc = 1:128
-                if session_idx == 1
-                    rot270_avg_MoBI(eloc,:) = mean(epochedEEG.data(eloc,:,ep_270(q)), 3);
-                else
-                    rot270_avg_Desk(eloc,:) = mean(epochedEEG.data(eloc,:,ep_270(q)), 3);   
-                end    
-            end
-        end
+        if session_idx == 1
+            rot270_avg_MoBI = mean(epochedEEG.data(:,:,ep_270), 3);
+        else
+            rot270_avg_Desk = mean(epochedEEG.data(:,:,ep_270), 3);
+        end    
         
         
         % Compute point-to-point intertrial variance 
