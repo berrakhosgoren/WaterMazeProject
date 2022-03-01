@@ -1041,7 +1041,7 @@ save(fullfile(table_path,'distance_error_controls.mat'), 'distance_error_control
 % loop over patients
 for Pi = 1:numel(patients)
     
-    subject                    = participantsPreproc(Pi);
+    subject                    = patients(Pi);
     participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
     epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
     epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
@@ -1060,7 +1060,7 @@ end
 % loop over controls
 for Ci = 1:numel(controls)
     
-    subject                    = participantsPreproc(Pi);
+    subject                    = controls(Ci);
     participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
     epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
     epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
