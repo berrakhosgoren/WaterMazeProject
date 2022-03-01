@@ -8,15 +8,12 @@ ft_defaults
 if strcmp(pwd, 'P:\Berrak_Hosgoren\WM_analysis_channel_level')
     projectPath = 'P:\Berrak_Hosgoren';
 else
-    projectPath = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze';
+    projectPath = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject';
 end
 
 
-% add other utilities to path
-addpath(genpath(fullfile(projectPath,'\Analysis')))
-
 % participant IDs for each loop 
-participantsPreproc     = [81001:81010,82001,82002, 83001:83003, 83005:83009];
+participantsPreproc     = [82003:82007];
 
 % configuration
 WM_config; 
@@ -254,7 +251,7 @@ end
 % Second dimension: data points
 % Third dimension: participants
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance';
 
 save(fullfile(table_path,'varEnMobi_fm_pat.mat'), 'varEnMobi_fm_pat');
 save(fullfile(table_path,'varEnMobi_fm_cont.mat'), 'varEnMobi_fm_cont');
@@ -282,7 +279,7 @@ save(fullfile(table_path,'varBasMobi_allEloc_cont.mat'), 'varBasMobi_allEloc_con
 save(fullfile(table_path,'varBasDesk_allEloc_pat.mat'), 'varBasDesk_allEloc_pat');
 save(fullfile(table_path,'varBasDesk_allEloc_cont.mat'), 'varBasDesk_allEloc_cont');
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\ERD';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERD';
 
 save(fullfile(table_path,'erdEnMobi_fm_pat.mat'), 'erdEnMobi_fm_pat');
 save(fullfile(table_path,'erdEnMobi_fm_cont.mat'), 'erdEnMobi_fm_cont');
@@ -340,7 +337,7 @@ end
 
 % save them
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverTime';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime';
 
 save(fullfile(table_path,'meanTime_fm_pat.mat'), 'meanTime_fm_pat');
 save(fullfile(table_path,'meanTime_fm_cont.mat'), 'meanTime_fm_cont');
@@ -369,7 +366,7 @@ for Ci = 1:(count_c-1)
 end
 
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc';
 
 patients = cellstr(string(patients));
 controls = cellstr(string(controls));
@@ -480,7 +477,7 @@ end
 % Second dimension: data points
 % Third dimension: participants
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\Rotation';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\Rotation';
 
 save(fullfile(table_path,'rot0MoBI_varfm_p.mat'), 'rot0MoBI_varfm_p');
 save(fullfile(table_path,'rot0Desk_varfm_p.mat'), 'rot0Desk_varfm_p');
@@ -523,15 +520,15 @@ save(fullfile(table_path,'rot270Desk_varall_c.mat'), 'rot270Desk_varall_c');
 %---------------------------------------------------------
 
 % load the baseline intertrial variance
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasMobi_fm_pat.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasDesk_fm_pat.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasMobi_fm_cont.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasDesk_fm_cont.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_fm_pat.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_fm_pat.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_fm_cont.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_fm_cont.mat');
 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasMobi_allEloc_pat.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasDesk_allEloc_pat.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasMobi_allEloc_cont.mat');
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\IntertrialVariance\varBasDesk_allEloc_cont.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_allEloc_pat.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_allEloc_pat.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_allEloc_cont.mat');
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_allEloc_cont.mat');
 
 
 % all electrodes
@@ -589,7 +586,7 @@ rot270Desk_erdfm_c(:,:,:) = rot270Desk_erdall_c(eloc,:,:);
 % save the matricies
 %---------------------------------------------------------
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\ERD\Rotation';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERD\Rotation';
 
 save(fullfile(table_path,'rot0MoBI_erdfm_p.mat'), 'rot0MoBI_erdfm_p');
 save(fullfile(table_path,'rot0Desk_erdfm_p.mat'), 'rot0Desk_erdfm_p');
@@ -683,7 +680,7 @@ end
 
 % save them
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverTime\Rotation';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime\Rotation';
 
 save(fullfile(table_path,'rot_meanTime_fm_p.mat'), 'rot_meanTime_fm_p');
 save(fullfile(table_path,'rot_meanTime_fm_c.mat'), 'rot_meanTime_fm_c');
@@ -713,7 +710,7 @@ end
 
 
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\Rotation';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\Rotation';
 
 patients = cellstr(string(patients));
 controls = cellstr(string(controls));
@@ -744,8 +741,8 @@ save(fullfile(table_path,'rot_meanEloc_all_c.mat'), 'rot_meanEloc_all_c');
 
 
 % load theta matricies 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverTime\meanTime_allEloc_cont.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverTime\meanTime_allEloc_pat.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime\meanTime_allEloc_cont.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime\meanTime_allEloc_pat.mat')
 
 
 % seperate patient and control participants
@@ -866,7 +863,7 @@ end
 
 
 % save the figures
-path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Graphs';
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 f = [f1,f2,f3,f4,f5,f6,f7,f8];
 
@@ -956,7 +953,7 @@ end
 
 % save them
 
-table_path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral';
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral';
 
 save(fullfile(table_path,'searchduration_patients.mat'), 'searchduration_patients');
 save(fullfile(table_path,'searchduration_controls.mat'), 'searchduration_controls');

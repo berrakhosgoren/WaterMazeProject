@@ -5,7 +5,7 @@ clear bemobil_config
 if strcmp(pwd, 'P:\Berrak_Hosgoren\WM_analysis_channel_level')
     bemobil_config.study_folder = 'P:\Berrak_Hosgoren\WM_data\';
 else
-    bemobil_config.study_folder = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Data\';
+    bemobil_config.study_folder = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\';
 end
    
 bemobil_config.filename_prefix = '';

@@ -1,8 +1,8 @@
 % load theta matricies 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_pat.mat') 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_c.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_p.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_pat.mat') 
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_c.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_p.mat')
 
 % 1. Encoding
 %--------------------------------------------------------------------------
@@ -168,7 +168,7 @@ hleg1 = legend(c(1:2), 'Patients', 'Controls');
 %--------------------------------------------------------------------------
 % save the graphs
 
-path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Graphs';
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 saveas(graph1,fullfile(path,'ThetaGraph1'),'png');
 saveas(graph2,fullfile(path,'ThetaGraph2'),'png');

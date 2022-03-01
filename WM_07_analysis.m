@@ -2,8 +2,8 @@
 %------------------------------------------------------------------
 
 % load the data
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
 
 % create a vector for encoding and retrieval theta powers separately 
 

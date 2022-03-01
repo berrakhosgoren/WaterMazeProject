@@ -2,10 +2,10 @@
 %------------------------------------------------------------------------
 
 % load the data
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\AverageOverEloc\meanEloc_fm_cont.mat') 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\searchduration_patients.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\searchduration_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_cont.mat') 
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_patients.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_controls.mat')
 
 % seperate them as mobi and desktop
 
@@ -88,7 +88,7 @@ title('Controls-Desktop','fontweight','bold','fontsize',18)
 % save the figures
 %----------------------------
 
-path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Graphs';
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 saveas(f1,fullfile(path,'Regression1'),'png');
 
@@ -98,8 +98,8 @@ saveas(f1,fullfile(path,'Regression1'),'png');
 
 % load the data
 
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\distance_error_patients.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\distance_error_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_patients.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_controls.mat')
 
 
 % seperate them as mobi and desktop
@@ -189,8 +189,8 @@ saveas(f2,fullfile(path,'Regression2'),'png');
 %---------------------------------------------
 
 % load the data
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\positions_patients.mat')
-load('C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Tables\Behavioral\positions_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\positions_patients.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\positions_controls.mat')
 
 % seperate them as mobi and desktop
 positions_patients_m = positions_patients(1:24,:,:);
@@ -202,7 +202,7 @@ positions_controls_d = positions_controls(25:48,:,:);
 patients = 81001:81010;
 controls = [82001,82002,83001:83003,83005:83009];
 
-path = 'C:\Users\BERRAK\Desktop\BPNLab\Watermaze\Analysis\Graphs';
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 
 % iterate over patients
