@@ -13,7 +13,7 @@ end
 
 
 % participant IDs for each loop 
-participantsPreproc     = [82003:82007];
+participantsPreproc     = [81001:81010, 82001:82007, 83001:83003, 83005:83009];
 
 % configuration
 WM_config; 
@@ -827,7 +827,7 @@ for Ci = 1:numel(controls)
     f5 = figure(5);
     set(gcf,'Name','Controls Encoding-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,4,Ci)
+    subplot(3,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,1,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Encoding-MoBI','fontweight','bold','fontsize',18)
@@ -836,7 +836,7 @@ for Ci = 1:numel(controls)
     f6 = figure(6);
     set(gcf,'Name','Controls Encoding-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,4,Ci)
+    subplot(3,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,2,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Encoding-Desktop','fontweight','bold','fontsize',18)
@@ -845,7 +845,7 @@ for Ci = 1:numel(controls)
     f7 = figure(7);
     set(gcf,'Name','Controls Retrieval-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,4,Ci)
+    subplot(3,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,3,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Retrieval-MoBI','fontweight','bold','fontsize',18)
@@ -854,7 +854,7 @@ for Ci = 1:numel(controls)
     f8 = figure(8);
     set(gcf,'Name','Contols Retrieval-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,4,Ci)
+    subplot(3,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,4,Ci), epochedEEG.chanlocs)
     sgtitle('Contols Retrieval-Desktop','fontweight','bold','fontsize',18)
@@ -862,16 +862,87 @@ for Ci = 1:numel(controls)
 end
 
 
+%-----------------------------------------------------------------------
+% create average topoplots for patients and controls
+
+avg_p_en_m = mean(meanTime_allEloc_pat(:,1),3); % Patients - Encoding MoBI
+avg_p_en_d = mean(meanTime_allEloc_pat(:,2),3); % Patients - Encoding Desktop
+avg_p_re_m = mean(meanTime_allEloc_pat(:,3),3); % Patients - Retrieval MoBI
+avg_p_re_d = mean(meanTime_allEloc_pat(:,4),3); % Patients - Retrieval Desktop
+
+avg_c_en_m = mean(meanTime_allEloc_cont(:,1),3); % Controls - Encoding MoBI
+avg_c_en_d = mean(meanTime_allEloc_cont(:,2),3); % Controls - Encoding Desktop
+avg_c_re_m = mean(meanTime_allEloc_cont(:,3),3); % Controls - Retrieval MoBI
+avg_c_re_d = mean(meanTime_allEloc_cont(:,4),3); % Controls - Retrieval Desktop
+
+% select sample channel locations
+patientEEG = pop_loadset('81001_epoched.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+controlEEG = pop_loadset('82001_epoched.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\82001');
+
+
+% create patient figure
+
+f9 = figure(9);
+
+set(gcf,'Name','Patients')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Encoding MoBI')
+topoplot(avg_p_en_m, patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Encoding Desktop')
+topoplot(avg_p_en_d, patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Retrieval MoBI')
+topoplot(avg_p_re_m, patientEEG.chanlocs)
+
+subplot(2,2,4)
+title('Retrieval Desktop')
+topoplot(avg_p_re_d, patientEEG.chanlocs)
+
+sgtitle('Patients','fontweight','bold','fontsize',18)
+
+
+% create control figure
+
+f10 = figure(10);
+
+set(gcf,'Name','Controls')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Encoding MoBI')
+topoplot(avg_c_en_m, controlEEG.chanlocs)
+
+subplot(2,2,2)
+title('Encoding Desktop')
+topoplot(avg_c_en_d, controlEEG.chanlocs)
+
+subplot(2,2,3)
+title('Retrieval MoBI')
+topoplot(avg_c_re_m, controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Retrieval Desktop')
+topoplot(avg_c_re_d, controlEEG.chanlocs)
+
+sgtitle('Controls','fontweight','bold','fontsize',18)
+
+
 % save the figures
 path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
-f = [f1,f2,f3,f4,f5,f6,f7,f8];
+f = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10];
 
-for i = 1:8
+for i = 1:10
     
     saveas(f(i),fullfile(path,[['topo' num2str(i)],'.png']));
 
 end
+
 
 
 %% STEP 05: Theta Power Graphs
