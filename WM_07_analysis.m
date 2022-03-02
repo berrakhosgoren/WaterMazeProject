@@ -20,44 +20,60 @@ retrieval_vector = [meanEloc_fm_pat(:,3); meanEloc_fm_pat(:,4); meanEloc_fm_cont
 
 
 
-
 % 2. 2x2 ANOVA
 %---------------------------------------------------------------------
 
+% Encoding ANOVA
 
-
-% encoding ANOVA
-%---------------
-
-encoding_matrix = zeros(20,2);
+encoding_datamat = zeros(25,2);
 
 % arrange the data
-encoding_matrix(:,1) = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
-encoding_matrix(:,2) = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];
+encoding_datamat(:,1) = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
+encoding_datamat(:,2) = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];
 
-n_subjects = 10; % number of subjects in each group 
+encoding_between = [repelem(1,10), repelem(2,15)]';
 
-[p3,table3,stats3] = anova2(encoding_matrix,n_subjects)
-
-c1 = multcompare(stats3)
+[tbl1,rm1] = simple_mixed_anova(encoding_datamat, encoding_between, {'Condition'},{'Group'});
 
 
-% retrieval ANOVA
-%---------------
+% Retrieval ANOVA
 
-retrieval_matrix = zeros(20,2);
+retrieval_datamat = zeros(25,2);
 
 % arrange the data
-retrieval_matrix(:,1) = [meanEloc_fm_pat(:,3); meanEloc_fm_cont(:,3)];
-retrieval_matrix(:,2) = [meanEloc_fm_pat(:,4); meanEloc_fm_cont(:,4)];
+retrieval_datamat(:,1) = [meanEloc_fm_pat(:,3); meanEloc_fm_cont(:,3)];
+retrieval_datamat(:,2) = [meanEloc_fm_pat(:,4); meanEloc_fm_cont(:,4)];
 
-n_subjects = 10; % number of subjects in each group 
+retrieval_between = [repelem(1,10), repelem(2,15)]';
 
-[p4,table4,stats4] = anova2(encoding_matrix,n_subjects)
-
-c2 = multcompare(stats4)
+[tbl2,rm2] = simple_mixed_anova(retrieval_datamat, retrieval_between, {'Condition'},{'Group'});
 
 
+% 
+
+% 3. 2x2x4 ANOVA
+%---------------------------------------------------------------
+
+% load the data
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_p.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\Rotation\rot_meanEloc_fm_c.mat')
+
+
+rotation_datamat = zeros(25,2,4);
+
+% arrange the data
+rotation_datamat(:,1,1) = [rot_meanEloc_fm_p(:,1); rot_meanEloc_fm_c(:,1)];
+rotation_datamat(:,2,1) = [rot_meanEloc_fm_p(:,2); rot_meanEloc_fm_c(:,2)];
+rotation_datamat(:,1,2) = [rot_meanEloc_fm_p(:,3); rot_meanEloc_fm_c(:,3)];
+rotation_datamat(:,2,2) = [rot_meanEloc_fm_p(:,4); rot_meanEloc_fm_c(:,4)];
+rotation_datamat(:,1,3) = [rot_meanEloc_fm_p(:,5); rot_meanEloc_fm_c(:,5)];
+rotation_datamat(:,2,3) = [rot_meanEloc_fm_p(:,6); rot_meanEloc_fm_c(:,6)];
+rotation_datamat(:,1,4) = [rot_meanEloc_fm_p(:,7); rot_meanEloc_fm_c(:,7)];
+rotation_datamat(:,2,4) = [rot_meanEloc_fm_p(:,8); rot_meanEloc_fm_c(:,8)];
+
+rotation_between = [repelem(1,10), repelem(2,15)]';
+
+[tbl3,rm3] = simple_mixed_anova(rotation_datamat, rotation_between, {'Condition','Rotation'},{'Group'});
 
 
 
