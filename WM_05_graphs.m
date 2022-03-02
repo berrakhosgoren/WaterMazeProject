@@ -17,7 +17,7 @@ e_controls_d = meanEloc_fm_cont(:,2); % encoding-controls-Desktop
 encoding = [e_patients_m; e_controls_m; e_patients_d; e_controls_d]';
 
 % assign the data to the groups
-group = [repelem(1,10), repelem(2,10), repelem(3,10), repelem(4,10)];
+group = [repelem(1,10), repelem(2,15), repelem(3,10), repelem(4,15)];
 
 % create the boxplot
 graph1 = figure(1);
@@ -28,7 +28,7 @@ title('Encoding')
 
 set(gca,'xtick',[mean(positions(1:2)) mean(positions(3:4))])
 set(gca,'xticklabel',{'MoBI','Desktop'})
-ylim([-100,600]) % change y axis scale
+ylim([-100,350]) % change y axis scale
 
 % color the boxes
 color = ['r', 'b', 'r', 'b'];
@@ -54,7 +54,7 @@ r_controls_d = meanEloc_fm_cont(:,4); % retrieval-controls-Desktop
 retrieval = [r_patients_m; r_controls_m; r_patients_d; r_controls_d]';
 
 % assign the data to the groups
-group = [repelem(1,10), repelem(2,10), repelem(3,10), repelem(4,10)];
+group = [repelem(1,10), repelem(2,15), repelem(3,10), repelem(4,15)];
 
 % create the boxplot
 graph2 = figure(2);
@@ -65,7 +65,7 @@ title('Retrieval')
 
 set(gca,'xtick',[mean(positions(1:2)) mean(positions(3:4))])
 set(gca,'xticklabel',{'MoBI','Desktop'})
-ylim([-100,600]) % change y axis scale
+ylim([-100,350]) % change y axis scale
 
 % color the boxes
 color = ['r', 'b', 'r', 'b'];
@@ -97,7 +97,7 @@ rotation_m = [rotation0_p_m; rotation90_p_m; rotation180_p_m; rotation270_p_m;..
 
 % assign the data to the groups
 group = [repelem(1,10), repelem(2,10), repelem(3,10), repelem(4,10),...
-    repelem(5,10), repelem(6,10), repelem(7,10), repelem(8,10)];
+    repelem(5,15), repelem(6,15), repelem(7,15), repelem(8,15)];
 
 % create the boxplot
 graph3 = figure(3);
@@ -108,7 +108,7 @@ title('Rotation-MoBI')
 
 set(gca,'xtick',[mean(positions(1:2)) mean(positions(3:4)) mean(positions(5:6)) mean(positions(7:8))])
 set(gca,'xticklabel',{'0','90','180','270'})
-ylim([-100,600]) % change y axis scale
+ylim([-100,350]) % change y axis scale
 
 % color the boxes
 color = ['r', 'b', 'r', 'b', 'r', 'b', 'r', 'b'];
@@ -141,7 +141,7 @@ rotation_d = [rotation0_p_d; rotation90_p_d; rotation180_p_d; rotation270_p_d;..
 
 % assign the data to the groups
 group = [repelem(1,10), repelem(2,10), repelem(3,10), repelem(4,10),...
-    repelem(5,10), repelem(6,10), repelem(7,10), repelem(8,10)];
+    repelem(5,15), repelem(6,15), repelem(7,15), repelem(8,15)];
 
 % create the boxplot
 graph4 = figure(4);
@@ -152,7 +152,7 @@ title('Rotation-Desktop')
 
 set(gca,'xtick',[mean(positions(1:2)) mean(positions(3:4)) mean(positions(5:6)) mean(positions(7:8))])
 set(gca,'xticklabel',{'0','90','180','270'})
-ylim([-100, 600]) % change y axis scale
+ylim([-100, 350]) % change y axis scale
 
 % color the boxes
 color = ['r', 'b', 'r', 'b', 'r', 'b', 'r', 'b'];
@@ -164,6 +164,7 @@ c = get(gca, 'Children');
 
 hleg1 = legend(c(1:2), 'Patients', 'Controls');
 
+%
 
 %--------------------------------------------------------------------------
 % save the graphs
