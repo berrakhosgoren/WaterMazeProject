@@ -25,33 +25,32 @@ retrieval_vector = [meanEloc_fm_pat(:,3); meanEloc_fm_pat(:,4); meanEloc_fm_cont
 
 % Encoding ANOVA
 
-encoding_datamat = zeros(25,2);
+groups = [repelem(1,9), repelem(2,16)]';
 
-% arrange the data
-encoding_datamat(:,1) = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
-encoding_datamat(:,2) = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];
+en_mobi = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
+en_desk = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];
 
-encoding_between = [repelem(1,10), repelem(2,15)]';
+encoding_t = table(groups, en_mobi, en_desk, 'VariableNames', {'Group','MoBI','Desktop'});
+condition = table([1 2]', 'VariableNames', {'Condition'});
 
-[tbl1,rm1] = simple_mixed_anova(encoding_datamat, encoding_between, {'Condition'},{'Group'});
+rm1 = fitrm(encoding_t,'MoBI,Desktop~Group','WithinDesign',condition);
+
+ranovatbl1 = ranova(rm1);
 
 
 % Retrieval ANOVA
 
-retrieval_datamat = zeros(25,2);
+ret_mobi = [meanEloc_fm_pat(:,3); meanEloc_fm_cont(:,3)];
+ret_desk = [meanEloc_fm_pat(:,4); meanEloc_fm_cont(:,4)];
 
-% arrange the data
-retrieval_datamat(:,1) = [meanEloc_fm_pat(:,3); meanEloc_fm_cont(:,3)];
-retrieval_datamat(:,2) = [meanEloc_fm_pat(:,4); meanEloc_fm_cont(:,4)];
+retrieval_t = table(groups, ret_mobi, ret_desk, 'VariableNames', {'Group','MoBI','Desktop'});
 
-retrieval_between = [repelem(1,10), repelem(2,15)]';
+rm2 = fitrm(retrieval_t,'MoBI-Desktop~Group','WithinDesign',condition);
 
-[tbl2,rm2] = simple_mixed_anova(retrieval_datamat, retrieval_between, {'Condition'},{'Group'});
+ranovatbl2 = ranova(rm2);
 
 
-% 
-
-% 3. 2x2x4 ANOVA
+%% 3. 2x2x2 ANOVA
 %---------------------------------------------------------------
 
 % load the data
