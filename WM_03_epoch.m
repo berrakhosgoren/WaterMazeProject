@@ -1,9 +1,9 @@
 function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
-% generates 2 second epochs from segments 
+% generates 4 second epochs from segments 
 
-% encoding: 0-2sec: searchtrial:found (0-2)
-% retrieval: 0-2sec: guesstrial:start (0-2)
-% baseline: 0-2 sec: segments of continuous baseline period
+% encoding: -2, +2 sec: searchtrial:found
+% retrieval: -2, +2 sec: guesstrial:start
+% baseline: 0, +4 sec: segments of continuous baseline period
 
     EEG = bandpassedEEG;
     
@@ -180,7 +180,7 @@ function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
     end
     
     % segments data into 2 second epochs (searchtrial:found, guesstrial:start) 
-    epochedEEG = pop_epoch(EEG, ['searchtrial:start',search_epochs, guess_epochs], [0 2], 'epochinfo', 'yes');
+    epochedEEG = pop_epoch(EEG, ['searchtrial:start',search_epochs, guess_epochs], [-2 2], 'epochinfo', 'yes');
     
 
     
@@ -231,12 +231,12 @@ function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
                
     end
     
-    % add dummy events 'X' that reoccure in 2 seconds to the baseline period 
+    % add dummy events 'X' that reoccure in 4 seconds to the baseline period 
     % since the data is sampled at 250 Hz
     % to translate the latency to second: latency * 4/1000
     latency_M = baselineStart_MoBI;
     latency_D = baselineStart_Desktop; 
-    for i = 1:round((baselineEnd_MoBI - baselineStart_MoBI)*4/2000, 0)
+    for i = 1:round((baselineEnd_MoBI - baselineStart_MoBI)*4/4000, 0)
         
         n_events = length(EEG.event);  
         
@@ -245,11 +245,11 @@ function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
         EEG.event(n_events+1).urevent = n_events + 1;
         EEG.event(n_events+1).session = 1;
         
-        latency_M = latency_M + (2*250);
+        latency_M = latency_M + (4*250);
         
     end
     
-    for i = 1:round((baselineEnd_Desktop - baselineStart_Desktop)*4/2000, 0)
+    for i = 1:round((baselineEnd_Desktop - baselineStart_Desktop)*4/4000, 0)
         
         n_events = length(EEG.event);  
         
@@ -258,7 +258,7 @@ function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
         EEG.event(n_events+1).urevent = n_events + 1;
         EEG.event(n_events+1).session = 2;
         
-        latency_D = latency_D + (2*250);
+        latency_D = latency_D + (4*250);
         
     end
     
@@ -267,7 +267,7 @@ function [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG)
     EEG = eeg_checkset(EEG,'eventconsistency');
     
     % segment the baseline into 2 seconds epochs 
-    epochedEEG_baseline = pop_epoch(EEG, {'X1','X2'}, [0 2], 'epochinfo', 'yes');
+    epochedEEG_baseline = pop_epoch(EEG, {'X1','X2'}, [0 4], 'epochinfo', 'yes');
     
 
 end
