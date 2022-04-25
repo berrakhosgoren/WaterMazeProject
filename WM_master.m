@@ -13,7 +13,7 @@ end
 
 
 % participant IDs for each loop 
-participantsPreproc     = [81001:81004, 81006:81010, 82001:82004, 82006:82008, 84009, 83001:83003, 83006:83010];
+participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82011 83001:83003, 83006:83011];
 
 % configuration
 WM_config; 
@@ -106,18 +106,36 @@ subject
 disp('PROCESSING DONE! YOU CAN CLOSE THE WINDOW NOW!')
 
 
-
-
+%% STEP 02.1: Bandpass Filter
 %---------------------------------------------------------------------------
 
+% pass this step if you calculate ERSP
 
 % Apply bandpass filter
 
-% Before epoching bandpass filter (4-8 Hz) was applied to the data by using eeglab
-% FIR(finite impulse response) filter was used.
-% First low pass filter then high pass filter was applied. 
+% loop over participants
+for Pi = 1:numel(participantsPreproc)
+    
+    STUDY = []; CURRENTSTUDY = 0; ALLEEG = [];  CURRENTSET=[]; EEG = [];
+    
+    subject                 = participantsPreproc(Pi);
+    participantFolder       = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    preprocessedFileNameEEG = [num2str(subject') '_cleaned_with_ICA.set']; 
+    
+    
+    EEG = pop_loadset('filepath', participantFolder ,'filename', preprocessedFileNameEEG);  
+    
+    lowerPassbandEdge  = 4;
+    higherPassbandEdge = 8;
+ 
+    out_filename = [num2str(subject') '_bandpass_filtered.set'];
+    out_filepath = [bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]];
+    
+    [ ALLEEG, EEG, CURRENTSET ] = bemobil_filter(ALLEEG, EEG, CURRENTSET, lowerPassbandEdge, higherPassbandEdge,...
+    out_filename, out_filepath);
 
 
+end
 
 %% STEP 03: Extract epochs
 
@@ -129,14 +147,15 @@ for Pi = 1:numel(participantsPreproc)
     participantFolder = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
     
     bandpassedFileNameEEG      = [num2str(subject') '_bandpass_filtered.set'];
+    %preprocessedFileNameEEG    = [num2str(subject') '_cleaned_with_ICA.set'];
     epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
     epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
     
     
     if ~exist(fullfile(participantFolder, epochedFileNameEEG), 'file') && ~exist(fullfile(participantFolder, epochedBaselineFileNameEEG), 'file')
         
-        bandpassedEEG =  pop_loadset('filepath', participantFolder ,'filename', bandpassedFileNameEEG);        
-        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG);       
+        preprocessedEEG =  pop_loadset('filepath', participantFolder ,'filename', bandpassedFileNameEEG);        
+        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(preprocessedEEG);       
         pop_saveset(epochedEEG, 'filepath', participantFolder ,'filename', epochedFileNameEEG)
         pop_saveset(epochedEEG_baseline, 'filepath', participantFolder ,'filename', epochedBaselineFileNameEEG)
         
@@ -147,6 +166,33 @@ for Pi = 1:numel(participantsPreproc)
       
 end    
 
+
+
+%% ---ERSP--- 
+
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject = participantsPreproc(Pi);
+    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
+    input_filename = [num2str(subject') '_epoched_withoutbandpass.set'];
+    channels_to_use_for_study = 1:128;
+    output_foldername = '';
+    timewarp_latency_loadpath = NaN;
+    epochs_info_filename_input = NaN;
+    epochs_info_filename_output = NaN;
+    recompute = true;
+    has_timewarp_latencies = false;
+    dont_warp_but_cut = false;
+    n_freqs = 10;
+    n_times = 250;
+
+
+    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
+      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
+      0,dont_warp_but_cut, n_freqs, n_times )
+
+end
 
 %% STEP 04.1: ERD Calculation / Main 
 % create theta matricies and tables that includes all participants
@@ -780,7 +826,7 @@ for Pi = 1:numel(patients)
     f1 = figure(1);
     set(gcf,'Name','Patients Encoding-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,3,Pi)
+    subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,1,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Encoding-MoBI','fontweight','bold','fontsize',18)
@@ -789,7 +835,7 @@ for Pi = 1:numel(patients)
     f2 = figure(2);
     set(gcf,'Name','Patients Encoding-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,3,Pi)
+    subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,2,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Encoding-Desktop','fontweight','bold','fontsize',18)
@@ -798,7 +844,7 @@ for Pi = 1:numel(patients)
     f3 = figure(3);
     set(gcf,'Name','Patients Retrieval-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,3,Pi)
+    subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,3,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Retrieval-MoBI','fontweight','bold','fontsize',18)
@@ -807,7 +853,7 @@ for Pi = 1:numel(patients)
     f4 = figure(4);
     set(gcf,'Name','Patients Retrieval-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(3,3,Pi)
+    subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,4,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Retrieval-Desktop','fontweight','bold','fontsize',18)
@@ -827,7 +873,7 @@ for Ci = 1:numel(controls)
     f5 = figure(5);
     set(gcf,'Name','Controls Encoding-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(4,4,Ci)
+    subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,1,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Encoding-MoBI','fontweight','bold','fontsize',18)
@@ -836,7 +882,7 @@ for Ci = 1:numel(controls)
     f6 = figure(6);
     set(gcf,'Name','Controls Encoding-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(4,4,Ci)
+    subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,2,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Encoding-Desktop','fontweight','bold','fontsize',18)
@@ -845,7 +891,7 @@ for Ci = 1:numel(controls)
     f7 = figure(7);
     set(gcf,'Name','Controls Retrieval-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(4,4,Ci)
+    subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,3,Ci), epochedEEG.chanlocs)
     sgtitle('Controls Retrieval-MoBI','fontweight','bold','fontsize',18)
@@ -854,7 +900,7 @@ for Ci = 1:numel(controls)
     f8 = figure(8);
     set(gcf,'Name','Contols Retrieval-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
-    subplot(4,4,Ci)
+    subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,4,Ci), epochedEEG.chanlocs)
     sgtitle('Contols Retrieval-Desktop','fontweight','bold','fontsize',18)
