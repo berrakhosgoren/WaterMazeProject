@@ -25,7 +25,7 @@ retrieval_vector = [meanEloc_fm_pat(:,3); meanEloc_fm_pat(:,4); meanEloc_fm_cont
 
 % Encoding ANOVA
 
-groups = [repelem(1,9), repelem(2,16)]';
+groups = [repelem(1,10), repelem(2,18)]';
 
 en_mobi = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
 en_desk = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];

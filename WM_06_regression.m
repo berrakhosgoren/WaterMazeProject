@@ -276,11 +276,11 @@ load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOv
 
 
 
-patients = 81001:81010;
-controls = [82001:82007,83001:83003,83005:83009];
+patients = [81001:81004,81006:81010];
+controls = [82001:82004,82006:82008,84009,83001:83003,83006:83010];
 
 % iterate over patients
-for pi = 1:10
+for pi = 1:9
 
     % 1. Patient-MoBI
 
@@ -322,7 +322,7 @@ end
 
 
 % iterate over controls
-for ci = 1:15
+for ci = 1:16
 
 
     % 3. Control-MoBI
@@ -334,7 +334,7 @@ for ci = 1:15
     set(gcf,'Name','Controls-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
     
-    subplot(3,5,ci)
+    subplot(4,5,ci)
     plot(mdl15)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
@@ -352,7 +352,7 @@ for ci = 1:15
     set(gcf,'Name','Controls-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
-    subplot(3,5,ci)
+    subplot(4,5,ci)
     plot(mdl16)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
@@ -382,7 +382,7 @@ load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOv
 
 
 % iterate over patients
-for pi = 1:10
+for pi = 1:9
 
     % 1. Patient-MoBI
 
@@ -424,7 +424,7 @@ end
 
 
 % iterate over controls
-for ci = 1:15
+for ci = 1:16
 
 
     % 3. Control-MoBI
@@ -436,7 +436,7 @@ for ci = 1:15
     set(gcf,'Name','Controls-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
     
-    subplot(3,5,ci)
+    subplot(4,5,ci)
     plot(mdl19)
     xlabel('Retrieval - Theta Power')
     ylabel('Distance Error')
@@ -454,7 +454,7 @@ for ci = 1:15
     set(gcf,'Name','Controls-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
-    subplot(3,5,ci)
+    subplot(4,5,ci)
     plot(mdl20)
     xlabel('Retrieval - Theta Power')
     ylabel('Distance Error')
@@ -475,7 +475,7 @@ saveas(f11,fullfile(path,'Regression11'),'png');
 
 %
 
-% 6. Plot the Target and Response Positions
+%% 6. Plot the Target and Response Positions
 %---------------------------------------------
 
 % load the data
@@ -489,14 +489,14 @@ positions_controls_m = positions_controls(1:24,:,:);
 positions_controls_d = positions_controls(25:48,:,:);
 
 
-patients = 81001:81010;
-controls = [82001:82007,83001:83003,83005:83009];
+patients = [81001:81004,81006:81011];
+controls = [82001:82004,82006:82008,84009,82011,83001:83003,83006:83011];
 
 path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 
 % iterate over patients
-for pi = 1:10
+for pi = 1:9
     
     if rem(pi,2) == 1
         
@@ -608,7 +608,7 @@ end
 
 
 % iterate over controls
-for ci = 1:15
+for ci = 1:16
     
     if rem(ci,2) == 1
         
