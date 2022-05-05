@@ -590,54 +590,166 @@ for Pi = 1:numel(participantsPreproc)
     subject                    = participantsPreproc(Pi);
     participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
     epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
+    epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
     epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
+    epochedEEG_baseline        =  pop_loadset('filepath', participantFolder ,'filename', epochedBaselineFileNameEEG);
   
     
     % create different matricies for patients and controls
     if contains(num2str(subject), '81') == 1
-        [rotation_var_fm, rotation_var_allEloc] = WM_04_ERD2_rotation(epochedEEG);
+        [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_allEloc] = WM_04_ERD2_rotation(epochedEEG, epochedEEG_baseline);
         
-        rot0MoBI_varfm_p(:,:,count_p)   = rotation_var_fm(:,:,1);
-        rot0Desk_varfm_p(:,:,count_p)   = rotation_var_fm(:,:,2);
-        rot90MoBI_varfm_p(:,:,count_p)  = rotation_var_fm(:,:,3);
-        rot90Desk_varfm_p(:,:,count_p)  = rotation_var_fm(:,:,4);
-        rot180MoBI_varfm_p(:,:,count_p) = rotation_var_fm(:,:,5);
-        rot180Desk_varfm_p(:,:,count_p) = rotation_var_fm(:,:,6);
-        rot270MoBI_varfm_p(:,:,count_p) = rotation_var_fm(:,:,7);
-        rot270Desk_varfm_p(:,:,count_p) = rotation_var_fm(:,:,8);
+        rot0MoBI_varfm_p_guess(:,:,count_p)   = rotation_var_fm(:,:,1);
+        rot0Desk_varfm_p_guess(:,:,count_p)   = rotation_var_fm(:,:,2);
+        rot90MoBI_varfm_p_guess(:,:,count_p)  = rotation_var_fm(:,:,3);
+        rot90Desk_varfm_p_guess(:,:,count_p)  = rotation_var_fm(:,:,4);
+        rot180MoBI_varfm_p_guess(:,:,count_p) = rotation_var_fm(:,:,5);
+        rot180Desk_varfm_p_guess(:,:,count_p) = rotation_var_fm(:,:,6);
+        rot270MoBI_varfm_p_guess(:,:,count_p) = rotation_var_fm(:,:,7);
+        rot270Desk_varfm_p_guess(:,:,count_p) = rotation_var_fm(:,:,8);
         
-        rot0MoBI_varall_p(:,:,count_p)   = rotation_var_allEloc(:,:,1);
-        rot0Desk_varall_p(:,:,count_p)   = rotation_var_allEloc(:,:,2);
-        rot90MoBI_varall_p(:,:,count_p)  = rotation_var_allEloc(:,:,3);
-        rot90Desk_varall_p(:,:,count_p)  = rotation_var_allEloc(:,:,4);
-        rot180MoBI_varall_p(:,:,count_p) = rotation_var_allEloc(:,:,5);
-        rot180Desk_varall_p(:,:,count_p) = rotation_var_allEloc(:,:,6);
-        rot270MoBI_varall_p(:,:,count_p) = rotation_var_allEloc(:,:,7);
-        rot270Desk_varall_p(:,:,count_p) = rotation_var_allEloc(:,:,8);
+        rot0MoBI_varfm_p_all(:,:,count_p)   = rotation_var_fm(:,:,9);
+        rot0Desk_varfm_p_all(:,:,count_p)   = rotation_var_fm(:,:,10);
+        rot90MoBI_varfm_p_all(:,:,count_p)  = rotation_var_fm(:,:,11);
+        rot90Desk_varfm_p_all(:,:,count_p)  = rotation_var_fm(:,:,12);
+        rot180MoBI_varfm_p_all(:,:,count_p) = rotation_var_fm(:,:,13);
+        rot180Desk_varfm_p_all(:,:,count_p) = rotation_var_fm(:,:,14);
+        rot270MoBI_varfm_p_all(:,:,count_p) = rotation_var_fm(:,:,15);
+        rot270Desk_varfm_p_all(:,:,count_p) = rotation_var_fm(:,:,16);
+        
+        rot0MoBI_varall_p_guess(:,:,count_p)   = rotation_var_allEloc(:,:,1);
+        rot0Desk_varall_p_guess(:,:,count_p)   = rotation_var_allEloc(:,:,2);
+        rot90MoBI_varall_p_guess(:,:,count_p)  = rotation_var_allEloc(:,:,3);
+        rot90Desk_varall_p_guess(:,:,count_p)  = rotation_var_allEloc(:,:,4);
+        rot180MoBI_varall_p_guess(:,:,count_p) = rotation_var_allEloc(:,:,5);
+        rot180Desk_varall_p_guess(:,:,count_p) = rotation_var_allEloc(:,:,6);
+        rot270MoBI_varall_p_guess(:,:,count_p) = rotation_var_allEloc(:,:,7);
+        rot270Desk_varall_p_guess(:,:,count_p) = rotation_var_allEloc(:,:,8);
+        
+        rot0MoBI_varall_p_all(:,:,count_p)   = rotation_var_allEloc(:,:,9);
+        rot0Desk_varall_p_all(:,:,count_p)   = rotation_var_allEloc(:,:,10);
+        rot90MoBI_varall_p_all(:,:,count_p)  = rotation_var_allEloc(:,:,11);
+        rot90Desk_varall_p_all(:,:,count_p)  = rotation_var_allEloc(:,:,12);
+        rot180MoBI_varall_p_all(:,:,count_p) = rotation_var_allEloc(:,:,13);
+        rot180Desk_varall_p_all(:,:,count_p) = rotation_var_allEloc(:,:,14);
+        rot270MoBI_varall_p_all(:,:,count_p) = rotation_var_allEloc(:,:,15);
+        rot270Desk_varall_p_all(:,:,count_p) = rotation_var_allEloc(:,:,16);
+        
+        
+        rot0MoBI_erdfm_p_guess(:,:,count_p)   = rotation_erd_fm(:,:,1);
+        rot0Desk_erdfm_p_guess(:,:,count_p)   = rotation_erd_fm(:,:,2);
+        rot90MoBI_erdfm_p_guess(:,:,count_p)  = rotation_erd_fm(:,:,3);
+        rot90Desk_erdfm_p_guess(:,:,count_p)  = rotation_erd_fm(:,:,4);
+        rot180MoBI_erdfm_p_guess(:,:,count_p) = rotation_erd_fm(:,:,5);
+        rot180Desk_erdfm_p_guess(:,:,count_p) = rotation_erd_fm(:,:,6);
+        rot270MoBI_erdfm_p_guess(:,:,count_p) = rotation_erd_fm(:,:,7);
+        rot270Desk_erdfm_p_guess(:,:,count_p) = rotation_erd_fm(:,:,8);
+        
+        rot0MoBI_erdfm_p_all(:,:,count_p)   = rotation_erd_fm(:,:,9);
+        rot0Desk_erdfm_p_all(:,:,count_p)   = rotation_erd_fm(:,:,10);
+        rot90MoBI_erdfm_p_all(:,:,count_p)  = rotation_erd_fm(:,:,11);
+        rot90Desk_erdfm_p_all(:,:,count_p)  = rotation_erd_fm(:,:,12);
+        rot180MoBI_erdfm_p_all(:,:,count_p) = rotation_erd_fm(:,:,13);
+        rot180Desk_erdfm_p_all(:,:,count_p) = rotation_erd_fm(:,:,14);
+        rot270MoBI_erdfm_p_all(:,:,count_p) = rotation_erd_fm(:,:,15);
+        rot270Desk_erdfm_p_all(:,:,count_p) = rotation_erd_fm(:,:,16);
+        
+        rot0MoBI_erdall_p_guess(:,:,count_p)   = rotation_erd_allEloc(:,:,1);
+        rot0Desk_erdall_p_guess(:,:,count_p)   = rotation_erd_allEloc(:,:,2);
+        rot90MoBI_erdall_p_guess(:,:,count_p)  = rotation_erd_allEloc(:,:,3);
+        rot90Desk_erdall_p_guess(:,:,count_p)  = rotation_erd_allEloc(:,:,4);
+        rot180MoBI_erdall_p_guess(:,:,count_p) = rotation_erd_allEloc(:,:,5);
+        rot180Desk_erdall_p_guess(:,:,count_p) = rotation_erd_allEloc(:,:,6);
+        rot270MoBI_erdall_p_guess(:,:,count_p) = rotation_erd_allEloc(:,:,7);
+        rot270Desk_erdall_p_guess(:,:,count_p) = rotation_erd_allEloc(:,:,8);
+        
+        rot0MoBI_erdall_p_all(:,:,count_p)   = rotation_erd_allEloc(:,:,9);
+        rot0Desk_erdall_p_all(:,:,count_p)   = rotation_erd_allEloc(:,:,10);
+        rot90MoBI_erdall_p_all(:,:,count_p)  = rotation_erd_allEloc(:,:,11);
+        rot90Desk_erdall_p_all(:,:,count_p)  = rotation_erd_allEloc(:,:,12);
+        rot180MoBI_erdall_p_all(:,:,count_p) = rotation_erd_allEloc(:,:,13);
+        rot180Desk_erdall_p_all(:,:,count_p) = rotation_erd_allEloc(:,:,14);
+        rot270MoBI_erdall_p_all(:,:,count_p) = rotation_erd_allEloc(:,:,15);
+        rot270Desk_erdall_p_all(:,:,count_p) = rotation_erd_allEloc(:,:,16);
         
         patients(count_p) = subject; 
         count_p = count_p + 1;
         
     else
-        [rotation_var_fm, rotation_var_allEloc] = WM_04_ERD2_rotation(epochedEEG);
+        [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_allEloc] = WM_04_ERD2_rotation(epochedEEG, epochedEEG_baseline);
 
-        rot0MoBI_varfm_c(:,:,count_c)   = rotation_var_fm(:,:,1);
-        rot0Desk_varfm_c(:,:,count_c)   = rotation_var_fm(:,:,2);
-        rot90MoBI_varfm_c(:,:,count_c)  = rotation_var_fm(:,:,3);
-        rot90Desk_varfm_c(:,:,count_c)  = rotation_var_fm(:,:,4);
-        rot180MoBI_varfm_c(:,:,count_c) = rotation_var_fm(:,:,5);
-        rot180Desk_varfm_c(:,:,count_c) = rotation_var_fm(:,:,6);
-        rot270MoBI_varfm_c(:,:,count_c) = rotation_var_fm(:,:,7);
-        rot270Desk_varfm_c(:,:,count_c) = rotation_var_fm(:,:,8);
+        rot0MoBI_varfm_c_guess(:,:,count_c)   = rotation_var_fm(:,:,1);
+        rot0Desk_varfm_c_guess(:,:,count_c)   = rotation_var_fm(:,:,2);
+        rot90MoBI_varfm_c_guess(:,:,count_c)  = rotation_var_fm(:,:,3);
+        rot90Desk_varfm_c_guess(:,:,count_c)  = rotation_var_fm(:,:,4);
+        rot180MoBI_varfm_c_guess(:,:,count_c) = rotation_var_fm(:,:,5);
+        rot180Desk_varfm_c_guess(:,:,count_c) = rotation_var_fm(:,:,6);
+        rot270MoBI_varfm_c_guess(:,:,count_c) = rotation_var_fm(:,:,7);
+        rot270Desk_varfm_c_guess(:,:,count_c) = rotation_var_fm(:,:,8);
         
-        rot0MoBI_varall_c(:,:,count_c)   = rotation_var_allEloc(:,:,1);
-        rot0Desk_varall_c(:,:,count_c)   = rotation_var_allEloc(:,:,2);
-        rot90MoBI_varall_c(:,:,count_c)  = rotation_var_allEloc(:,:,3);
-        rot90Desk_varall_c(:,:,count_c)  = rotation_var_allEloc(:,:,4);
-        rot180MoBI_varall_c(:,:,count_c) = rotation_var_allEloc(:,:,5);
-        rot180Desk_varall_c(:,:,count_c) = rotation_var_allEloc(:,:,6);
-        rot270MoBI_varall_c(:,:,count_c) = rotation_var_allEloc(:,:,7);
-        rot270Desk_varall_c(:,:,count_c) = rotation_var_allEloc(:,:,8);
+        rot0MoBI_varfm_c_all(:,:,count_c)   = rotation_var_fm(:,:,9);
+        rot0Desk_varfm_c_all(:,:,count_c)   = rotation_var_fm(:,:,10);
+        rot90MoBI_varfm_c_all(:,:,count_c)  = rotation_var_fm(:,:,11);
+        rot90Desk_varfm_c_all(:,:,count_c)  = rotation_var_fm(:,:,12);
+        rot180MoBI_varfm_c_all(:,:,count_c) = rotation_var_fm(:,:,13);
+        rot180Desk_varfm_c_all(:,:,count_c) = rotation_var_fm(:,:,14);
+        rot270MoBI_varfm_c_all(:,:,count_c) = rotation_var_fm(:,:,15);
+        rot270Desk_varfm_c_all(:,:,count_c) = rotation_var_fm(:,:,16);
+        
+        rot0MoBI_varall_c_guess(:,:,count_c)   = rotation_var_allEloc(:,:,1);
+        rot0Desk_varall_c_guess(:,:,count_c)   = rotation_var_allEloc(:,:,2);
+        rot90MoBI_varall_c_guess(:,:,count_c)  = rotation_var_allEloc(:,:,3);
+        rot90Desk_varall_c_guess(:,:,count_c)  = rotation_var_allEloc(:,:,4);
+        rot180MoBI_varall_c_guess(:,:,count_c) = rotation_var_allEloc(:,:,5);
+        rot180Desk_varall_c_guess(:,:,count_c) = rotation_var_allEloc(:,:,6);
+        rot270MoBI_varall_c_guess(:,:,count_c) = rotation_var_allEloc(:,:,7);
+        rot270Desk_varall_c_guess(:,:,count_c) = rotation_var_allEloc(:,:,8);
+        
+        rot0MoBI_varall_c_all(:,:,count_c)   = rotation_var_allEloc(:,:,9);
+        rot0Desk_varall_c_all(:,:,count_c)   = rotation_var_allEloc(:,:,10);
+        rot90MoBI_varall_c_all(:,:,count_c)  = rotation_var_allEloc(:,:,11);
+        rot90Desk_varall_c_all(:,:,count_c)  = rotation_var_allEloc(:,:,12);
+        rot180MoBI_varall_c_all(:,:,count_c) = rotation_var_allEloc(:,:,13);
+        rot180Desk_varall_c_all(:,:,count_c) = rotation_var_allEloc(:,:,14);
+        rot270MoBI_varall_c_all(:,:,count_c) = rotation_var_allEloc(:,:,15);
+        rot270Desk_varall_c_all(:,:,count_c) = rotation_var_allEloc(:,:,16);
+        
+        
+        rot0MoBI_erdfm_c_guess(:,:,count_c)   = rotation_erd_fm(:,:,1);
+        rot0Desk_erdfm_c_guess(:,:,count_c)   = rotation_erd_fm(:,:,2);
+        rot90MoBI_erdfm_c_guess(:,:,count_c)  = rotation_erd_fm(:,:,3);
+        rot90Desk_erdfm_c_guess(:,:,count_c)  = rotation_erd_fm(:,:,4);
+        rot180MoBI_erdfm_c_guess(:,:,count_c) = rotation_erd_fm(:,:,5);
+        rot180Desk_erdfm_c_guess(:,:,count_c) = rotation_erd_fm(:,:,6);
+        rot270MoBI_erdfm_c_guess(:,:,count_c) = rotation_erd_fm(:,:,7);
+        rot270Desk_erdfm_c_guess(:,:,count_c) = rotation_erd_fm(:,:,8);
+        
+        rot0MoBI_erdfm_c_all(:,:,count_c)   = rotation_erd_fm(:,:,9);
+        rot0Desk_erdfm_c_all(:,:,count_c)   = rotation_erd_fm(:,:,10);
+        rot90MoBI_erdfm_c_all(:,:,count_c)  = rotation_erd_fm(:,:,11);
+        rot90Desk_erdfm_c_all(:,:,count_c)  = rotation_erd_fm(:,:,12);
+        rot180MoBI_erdfm_c_all(:,:,count_c) = rotation_erd_fm(:,:,13);
+        rot180Desk_erdfm_c_all(:,:,count_c) = rotation_erd_fm(:,:,14);
+        rot270MoBI_erdfm_c_all(:,:,count_c) = rotation_erd_fm(:,:,15);
+        rot270Desk_erdfm_c_all(:,:,count_c) = rotation_erd_fm(:,:,16);
+        
+        rot0MoBI_erdall_c_guess(:,:,count_c)   = rotation_erd_allEloc(:,:,1);
+        rot0Desk_erdall_c_guess(:,:,count_c)   = rotation_erd_allEloc(:,:,2);
+        rot90MoBI_erdall_c_guess(:,:,count_c)  = rotation_erd_allEloc(:,:,3);
+        rot90Desk_erdall_c_guess(:,:,count_c)  = rotation_erd_allEloc(:,:,4);
+        rot180MoBI_erdall_c_guess(:,:,count_c) = rotation_erd_allEloc(:,:,5);
+        rot180Desk_erdall_c_guess(:,:,count_c) = rotation_erd_allEloc(:,:,6);
+        rot270MoBI_erdall_c_guess(:,:,count_c) = rotation_erd_allEloc(:,:,7);
+        rot270Desk_erdall_c_guess(:,:,count_c) = rotation_erd_allEloc(:,:,8);
+        
+        rot0MoBI_erdall_c_all(:,:,count_c)   = rotation_erd_allEloc(:,:,9);
+        rot0Desk_erdall_c_all(:,:,count_c)   = rotation_erd_allEloc(:,:,10);
+        rot90MoBI_erdall_c_all(:,:,count_c)  = rotation_erd_allEloc(:,:,11);
+        rot90Desk_erdall_c_all(:,:,count_c)  = rotation_erd_allEloc(:,:,12);
+        rot180MoBI_erdall_c_all(:,:,count_c) = rotation_erd_allEloc(:,:,13);
+        rot180Desk_erdall_c_all(:,:,count_c) = rotation_erd_allEloc(:,:,14);
+        rot270MoBI_erdall_c_all(:,:,count_c) = rotation_erd_allEloc(:,:,15);
+        rot270Desk_erdall_c_all(:,:,count_c) = rotation_erd_allEloc(:,:,16);
         
         controls(count_c) = subject; 
         count_c = count_c + 1;
@@ -655,108 +767,77 @@ end
 
 table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\Rotation';
 
-save(fullfile(table_path,'rot0MoBI_varfm_p.mat'), 'rot0MoBI_varfm_p');
-save(fullfile(table_path,'rot0Desk_varfm_p.mat'), 'rot0Desk_varfm_p');
-save(fullfile(table_path,'rot90MoBI_varfm_p.mat'), 'rot90MoBI_varfm_p');
-save(fullfile(table_path,'rot90Desk_varfm_p.mat'), 'rot90Desk_varfm_p');
-save(fullfile(table_path,'rot180MoBI_varfm_p.mat'), 'rot180MoBI_varfm_p');
-save(fullfile(table_path,'rot180Desk_varfm_p.mat'), 'rot180Desk_varfm_p');
-save(fullfile(table_path,'rot270MoBI_varfm_p.mat'), 'rot270MoBI_varfm_p');
-save(fullfile(table_path,'rot270Desk_varfm_p.mat'), 'rot270Desk_varfm_p');
+save(fullfile(table_path,'rot0MoBI_varfm_p_guess.mat'), 'rot0MoBI_varfm_p_guess');
+save(fullfile(table_path,'rot0Desk_varfm_p_guess.mat'), 'rot0Desk_varfm_p_guess');
+save(fullfile(table_path,'rot90MoBI_varfm_p_guess.mat'), 'rot90MoBI_varfm_p_guess');
+save(fullfile(table_path,'rot90Desk_varfm_p_guess.mat'), 'rot90Desk_varfm_p_guess');
+save(fullfile(table_path,'rot180MoBI_varfm_p_guess.mat'), 'rot180MoBI_varfm_p_guess');
+save(fullfile(table_path,'rot180Desk_varfm_p_guess.mat'), 'rot180Desk_varfm_p_guess');
+save(fullfile(table_path,'rot270MoBI_varfm_p_guess.mat'), 'rot270MoBI_varfm_p_guess');
+save(fullfile(table_path,'rot270Desk_varfm_p_guess.mat'), 'rot270Desk_varfm_p_guess');
 
-save(fullfile(table_path,'rot0MoBI_varall_p.mat'), 'rot0MoBI_varall_p');
-save(fullfile(table_path,'rot0Desk_varall_p.mat'), 'rot0Desk_varall_p');
-save(fullfile(table_path,'rot90MoBI_varall_p.mat'), 'rot90MoBI_varall_p');
-save(fullfile(table_path,'rot90Desk_varall_p.mat'), 'rot90Desk_varall_p');
-save(fullfile(table_path,'rot180MoBI_varall_p.mat'), 'rot180MoBI_varall_p');
-save(fullfile(table_path,'rot180Desk_varall_p.mat'), 'rot180Desk_varall_p');
-save(fullfile(table_path,'rot270MoBI_varall_p.mat'), 'rot270MoBI_varall_p');
-save(fullfile(table_path,'rot270Desk_varall_p.mat'), 'rot270Desk_varall_p');
+save(fullfile(table_path,'rot0MoBI_varfm_p_all.mat'), 'rot0MoBI_varfm_p_all');
+save(fullfile(table_path,'rot0Desk_varfm_p_all.mat'), 'rot0Desk_varfm_p_all');
+save(fullfile(table_path,'rot90MoBI_varfm_p_all.mat'), 'rot90MoBI_varfm_p_all');
+save(fullfile(table_path,'rot90Desk_varfm_p_all.mat'), 'rot90Desk_varfm_p_all');
+save(fullfile(table_path,'rot180MoBI_varfm_p_all.mat'), 'rot180MoBI_varfm_p_all');
+save(fullfile(table_path,'rot180Desk_varfm_p_all.mat'), 'rot180Desk_varfm_p_all');
+save(fullfile(table_path,'rot270MoBI_varfm_p_all.mat'), 'rot270MoBI_varfm_p_all');
+save(fullfile(table_path,'rot270Desk_varfm_p_all.mat'), 'rot270Desk_varfm_p_all');
 
-save(fullfile(table_path,'rot0MoBI_varfm_c.mat'), 'rot0MoBI_varfm_c');
-save(fullfile(table_path,'rot0Desk_varfm_c.mat'), 'rot0Desk_varfm_c');
-save(fullfile(table_path,'rot90MoBI_varfm_c.mat'), 'rot90MoBI_varfm_c');
-save(fullfile(table_path,'rot90Desk_varfm_c.mat'), 'rot90Desk_varfm_c');
-save(fullfile(table_path,'rot180MoBI_varfm_c.mat'), 'rot180MoBI_varfm_c');
-save(fullfile(table_path,'rot180Desk_varfm_c.mat'), 'rot180Desk_varfm_c');
-save(fullfile(table_path,'rot270MoBI_varfm_c.mat'), 'rot270MoBI_varfm_c');
-save(fullfile(table_path,'rot270Desk_varfm_c.mat'), 'rot270Desk_varfm_c');
+save(fullfile(table_path,'rot0MoBI_varall_p_guess.mat'), 'rot0MoBI_varall_p_guess');
+save(fullfile(table_path,'rot0Desk_varall_p_guess.mat'), 'rot0Desk_varall_p_guess');
+save(fullfile(table_path,'rot90MoBI_varall_p_guess.mat'), 'rot90MoBI_varall_p_guess');
+save(fullfile(table_path,'rot90Desk_varall_p_guess.mat'), 'rot90Desk_varall_p_guess');
+save(fullfile(table_path,'rot180MoBI_varall_p_guess.mat'), 'rot180MoBI_varall_p_guess');
+save(fullfile(table_path,'rot180Desk_varall_p_guess.mat'), 'rot180Desk_varall_p_guess');
+save(fullfile(table_path,'rot270MoBI_varall_p_guess.mat'), 'rot270MoBI_varall_p_guess');
+save(fullfile(table_path,'rot270Desk_varall_p_guess.mat'), 'rot270Desk_varall_p_guess');
 
-save(fullfile(table_path,'rot0MoBI_varall_c.mat'), 'rot0MoBI_varall_c');
-save(fullfile(table_path,'rot0Desk_varall_c.mat'), 'rot0Desk_varall_c');
-save(fullfile(table_path,'rot90MoBI_varall_c.mat'), 'rot90MoBI_varall_c');
-save(fullfile(table_path,'rot90Desk_varall_c.mat'), 'rot90Desk_varall_c');
-save(fullfile(table_path,'rot180MoBI_varall_c.mat'), 'rot180MoBI_varall_c');
-save(fullfile(table_path,'rot180Desk_varall_c.mat'), 'rot180Desk_varall_c');
-save(fullfile(table_path,'rot270MoBI_varall_c.mat'), 'rot270MoBI_varall_c');
-save(fullfile(table_path,'rot270Desk_varall_c.mat'), 'rot270Desk_varall_c');
+save(fullfile(table_path,'rot0MoBI_varall_p_all.mat'), 'rot0MoBI_varall_p_all');
+save(fullfile(table_path,'rot0Desk_varall_p_all.mat'), 'rot0Desk_varall_p_all');
+save(fullfile(table_path,'rot90MoBI_varall_p_all.mat'), 'rot90MoBI_varall_p_all');
+save(fullfile(table_path,'rot90Desk_varall_p_all.mat'), 'rot90Desk_varall_p_all');
+save(fullfile(table_path,'rot180MoBI_varall_p_all.mat'), 'rot180MoBI_varall_p_all');
+save(fullfile(table_path,'rot180Desk_varall_p_all.mat'), 'rot180Desk_varall_p_all');
+save(fullfile(table_path,'rot270MoBI_varall_p_all.mat'), 'rot270MoBI_varall_p_all');
+save(fullfile(table_path,'rot270Desk_varall_p_all.mat'), 'rot270Desk_varall_p_all');
 
+save(fullfile(table_path,'rot0MoBI_varfm_c_guess.mat'), 'rot0MoBI_varfm_c_guess');
+save(fullfile(table_path,'rot0Desk_varfm_c_guess.mat'), 'rot0Desk_varfm_c_guess');
+save(fullfile(table_path,'rot90MoBI_varfm_c_guess.mat'), 'rot90MoBI_varfm_c_guess');
+save(fullfile(table_path,'rot90Desk_varfm_c_guess.mat'), 'rot90Desk_varfm_c_guess');
+save(fullfile(table_path,'rot180MoBI_varfm_c_guess.mat'), 'rot180MoBI_varfm_c_guess');
+save(fullfile(table_path,'rot180Desk_varfm_c_guess.mat'), 'rot180Desk_varfm_c_guess');
+save(fullfile(table_path,'rot270MoBI_varfm_c_guess.mat'), 'rot270MoBI_varfm_c_guess');
+save(fullfile(table_path,'rot270Desk_varfm_c_guess.mat'), 'rot270Desk_varfm_c_guess');
 
-% calculate the erd/ers values from intertrial variances
-%---------------------------------------------------------
+save(fullfile(table_path,'rot0MoBI_varfm_c_all.mat'), 'rot0MoBI_varfm_c_all');
+save(fullfile(table_path,'rot0Desk_varfm_c_all.mat'), 'rot0Desk_varfm_c_all');
+save(fullfile(table_path,'rot90MoBI_varfm_c_all.mat'), 'rot90MoBI_varfm_c_all');
+save(fullfile(table_path,'rot90Desk_varfm_c_all.mat'), 'rot90Desk_varfm_c_all');
+save(fullfile(table_path,'rot180MoBI_varfm_c_all.mat'), 'rot180MoBI_varfm_c_all');
+save(fullfile(table_path,'rot180Desk_varfm_c_all.mat'), 'rot180Desk_varfm_c_all');
+save(fullfile(table_path,'rot270MoBI_varfm_c_all.mat'), 'rot270MoBI_varfm_c_all');
+save(fullfile(table_path,'rot270Desk_varfm_c_all.mat'), 'rot270Desk_varfm_c_all');
 
-% load the baseline intertrial variance
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_fm_pat.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_fm_pat.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_fm_cont.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_fm_cont.mat');
+save(fullfile(table_path,'rot0MoBI_varall_c_guess.mat'), 'rot0MoBI_varall_c_guess');
+save(fullfile(table_path,'rot0Desk_varall_c_guess.mat'), 'rot0Desk_varall_c_guess');
+save(fullfile(table_path,'rot90MoBI_varall_c_guess.mat'), 'rot90MoBI_varall_c_guess');
+save(fullfile(table_path,'rot90Desk_varall_c_guess.mat'), 'rot90Desk_varall_c_guess');
+save(fullfile(table_path,'rot180MoBI_varall_c_guess.mat'), 'rot180MoBI_varall_c_guess');
+save(fullfile(table_path,'rot180Desk_varall_c_guess.mat'), 'rot180Desk_varall_c_guess');
+save(fullfile(table_path,'rot270MoBI_varall_c_guess.mat'), 'rot270MoBI_varall_c_guess');
+save(fullfile(table_path,'rot270Desk_varall_c_guess.mat'), 'rot270Desk_varall_c_guess');
 
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_allEloc_pat.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_allEloc_pat.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasMobi_allEloc_cont.mat');
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\IntertrialVariance\varBasDesk_allEloc_cont.mat');
-
-
-% all electrodes
-
-% iterate over patients
-for Pi = 1:numel(patients)
-    rot0MoBI_erdall_p(:,:,Pi) = ((rot0MoBI_varall_p(:,:,Pi) - varBasMobi_allEloc_pat(:,:,Pi))./varBasMobi_allEloc_pat(:,:,Pi)).*100;
-    rot0Desk_erdall_p(:,:,Pi) = ((rot0Desk_varall_p(:,:,Pi) - varBasDesk_allEloc_pat(:,:,Pi))./varBasDesk_allEloc_pat(:,:,Pi)).*100;
-    rot90MoBI_erdall_p(:,:,Pi) = ((rot90MoBI_varall_p(:,:,Pi) - varBasMobi_allEloc_pat(:,:,Pi))./varBasMobi_allEloc_pat(:,:,Pi)).*100;
-    rot90Desk_erdall_p(:,:,Pi) = ((rot90Desk_varall_p(:,:,Pi) - varBasDesk_allEloc_pat(:,:,Pi))./varBasDesk_allEloc_pat(:,:,Pi)).*100;
-    rot180MoBI_erdall_p(:,:,Pi) = ((rot180MoBI_varall_p(:,:,Pi) - varBasMobi_allEloc_pat(:,:,Pi))./varBasMobi_allEloc_pat(:,:,Pi)).*100;
-    rot180Desk_erdall_p(:,:,Pi) = ((rot180Desk_varall_p(:,:,Pi) - varBasDesk_allEloc_pat(:,:,Pi))./varBasDesk_allEloc_pat(:,:,Pi)).*100;
-    rot270MoBI_erdall_p(:,:,Pi) = ((rot270MoBI_varall_p(:,:,Pi) - varBasMobi_allEloc_pat(:,:,Pi))./varBasMobi_allEloc_pat(:,:,Pi)).*100;
-    rot270Desk_erdall_p(:,:,Pi) = ((rot270Desk_varall_p(:,:,Pi) - varBasDesk_allEloc_pat(:,:,Pi))./varBasDesk_allEloc_pat(:,:,Pi)).*100;
-end
-
-% iterate over controls
-for Ci = 1:numel(controls)
-    rot0MoBI_erdall_c(:,:,Ci) = ((rot0MoBI_varall_c(:,:,Ci) - varBasMobi_allEloc_cont(:,:,Ci))./varBasMobi_allEloc_cont(:,:,Ci)).*100;
-    rot0Desk_erdall_c(:,:,Ci) = ((rot0Desk_varall_c(:,:,Ci) - varBasDesk_allEloc_cont(:,:,Ci))./varBasDesk_allEloc_cont(:,:,Ci)).*100;
-    rot90MoBI_erdall_c(:,:,Ci) = ((rot90MoBI_varall_c(:,:,Ci) - varBasMobi_allEloc_cont(:,:,Ci))./varBasMobi_allEloc_cont(:,:,Ci)).*100;
-    rot90Desk_erdall_c(:,:,Ci) = ((rot90Desk_varall_c(:,:,Ci) - varBasDesk_allEloc_cont(:,:,Ci))./varBasDesk_allEloc_cont(:,:,Ci)).*100;
-    rot180MoBI_erdall_c(:,:,Ci) = ((rot180MoBI_varall_c(:,:,Ci) - varBasMobi_allEloc_cont(:,:,Ci))./varBasMobi_allEloc_cont(:,:,Ci)).*100;
-    rot180Desk_erdall_c(:,:,Ci) = ((rot180Desk_varall_c(:,:,Ci) - varBasDesk_allEloc_cont(:,:,Ci))./varBasDesk_allEloc_cont(:,:,Ci)).*100;
-    rot270MoBI_erdall_c(:,:,Ci) = ((rot270MoBI_varall_c(:,:,Ci) - varBasMobi_allEloc_cont(:,:,Ci))./varBasMobi_allEloc_cont(:,:,Ci)).*100;
-    rot270Desk_erdall_c(:,:,Ci) = ((rot270Desk_varall_c(:,:,Ci) - varBasDesk_allEloc_cont(:,:,Ci))./varBasDesk_allEloc_cont(:,:,Ci)).*100;
-end
-
-
-% interested electrodes
-
-% interested eloctrode names: {'y1','y2','y3','y25','y32'}
-eloc = [33,34,35,57,64];
-
-
-rot0MoBI_erdfm_p(:,:,:)   = rot0MoBI_erdall_p(eloc,:,:);
-rot0Desk_erdfm_p(:,:,:)   = rot0Desk_erdall_p(eloc,:,:);
-rot90MoBI_erdfm_p(:,:,:)  = rot90MoBI_erdall_p(eloc,:,:);
-rot90Desk_erdfm_p(:,:,:)  = rot90Desk_erdall_p(eloc,:,:);
-rot180MoBI_erdfm_p(:,:,:) = rot180MoBI_erdall_p(eloc,:,:); 
-rot180Desk_erdfm_p(:,:,:) = rot180Desk_erdall_p(eloc,:,:);
-rot270MoBI_erdfm_p(:,:,:) = rot270MoBI_erdall_p(eloc,:,:); 
-rot270Desk_erdfm_p(:,:,:) = rot270Desk_erdall_p(eloc,:,:);
-
-rot0MoBI_erdfm_c(:,:,:)   = rot0MoBI_erdall_c(eloc,:,:);
-rot0Desk_erdfm_c(:,:,:)   = rot0Desk_erdall_c(eloc,:,:);
-rot90MoBI_erdfm_c(:,:,:)  = rot90MoBI_erdall_c(eloc,:,:);
-rot90Desk_erdfm_c(:,:,:)  = rot90Desk_erdall_c(eloc,:,:);
-rot180MoBI_erdfm_c(:,:,:) = rot180MoBI_erdall_c(eloc,:,:);
-rot180Desk_erdfm_c(:,:,:) = rot180Desk_erdall_c(eloc,:,:);
-rot270MoBI_erdfm_c(:,:,:) = rot270MoBI_erdall_c(eloc,:,:);
-rot270Desk_erdfm_c(:,:,:) = rot270Desk_erdall_c(eloc,:,:);
+save(fullfile(table_path,'rot0MoBI_varall_c_all.mat'), 'rot0MoBI_varall_c_all');
+save(fullfile(table_path,'rot0Desk_varall_c_all.mat'), 'rot0Desk_varall_c_all');
+save(fullfile(table_path,'rot90MoBI_varall_c_all.mat'), 'rot90MoBI_varall_c_all');
+save(fullfile(table_path,'rot90Desk_varall_c_all.mat'), 'rot90Desk_varall_c_all');
+save(fullfile(table_path,'rot180MoBI_varall_c_all.mat'), 'rot180MoBI_varall_c_all');
+save(fullfile(table_path,'rot180Desk_varall_c_all.mat'), 'rot180Desk_varall_c_all');
+save(fullfile(table_path,'rot270MoBI_varall_c_all.mat'), 'rot270MoBI_varall_c_all');
+save(fullfile(table_path,'rot270Desk_varall_c_all.mat'), 'rot270Desk_varall_c_all');
 
 
 % save the matricies
@@ -764,41 +845,77 @@ rot270Desk_erdfm_c(:,:,:) = rot270Desk_erdall_c(eloc,:,:);
 
 table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERD\Rotation';
 
-save(fullfile(table_path,'rot0MoBI_erdfm_p.mat'), 'rot0MoBI_erdfm_p');
-save(fullfile(table_path,'rot0Desk_erdfm_p.mat'), 'rot0Desk_erdfm_p');
-save(fullfile(table_path,'rot90MoBI_erdfm_p.mat'), 'rot90MoBI_erdfm_p');
-save(fullfile(table_path,'rot90Desk_erdfm_p.mat'), 'rot90Desk_erdfm_p');
-save(fullfile(table_path,'rot180MoBI_erdfm_p.mat'), 'rot180MoBI_erdfm_p');
-save(fullfile(table_path,'rot180Desk_erdfm_p.mat'), 'rot180Desk_erdfm_p');
-save(fullfile(table_path,'rot270MoBI_erdfm_p.mat'), 'rot270MoBI_erdfm_p');
-save(fullfile(table_path,'rot270Desk_erdfm_p.mat'), 'rot270Desk_erdfm_p');
+save(fullfile(table_path,'rot0MoBI_erdfm_p_guess.mat'), 'rot0MoBI_erdfm_p_guess');
+save(fullfile(table_path,'rot0Desk_erdfm_p_guess.mat'), 'rot0Desk_erdfm_p_guess');
+save(fullfile(table_path,'rot90MoBI_erdfm_p_guess.mat'), 'rot90MoBI_erdfm_p_guess');
+save(fullfile(table_path,'rot90Desk_erdfm_p_guess.mat'), 'rot90Desk_erdfm_p_guess');
+save(fullfile(table_path,'rot180MoBI_erdfm_p_guess.mat'), 'rot180MoBI_erdfm_p_guess');
+save(fullfile(table_path,'rot180Desk_erdfm_p_guess.mat'), 'rot180Desk_erdfm_p_guess');
+save(fullfile(table_path,'rot270MoBI_erdfm_p_guess.mat'), 'rot270MoBI_erdfm_p_guess');
+save(fullfile(table_path,'rot270Desk_erdfm_p_guess.mat'), 'rot270Desk_erdfm_p_guess');
 
-save(fullfile(table_path,'rot0MoBI_erdall_p.mat'), 'rot0MoBI_erdall_p');
-save(fullfile(table_path,'rot0Desk_erdall_p.mat'), 'rot0Desk_erdall_p');
-save(fullfile(table_path,'rot90MoBI_erdall_p.mat'), 'rot90MoBI_erdall_p');
-save(fullfile(table_path,'rot90Desk_erdall_p.mat'), 'rot90Desk_erdall_p');
-save(fullfile(table_path,'rot180MoBI_erdall_p.mat'), 'rot180MoBI_erdall_p');
-save(fullfile(table_path,'rot180Desk_erdall_p.mat'), 'rot180Desk_erdall_p');
-save(fullfile(table_path,'rot270MoBI_erdall_p.mat'), 'rot270MoBI_erdall_p');
-save(fullfile(table_path,'rot270Desk_erdall_p.mat'), 'rot270Desk_erdall_p');
+save(fullfile(table_path,'rot0MoBI_erdfm_p_all.mat'), 'rot0MoBI_erdfm_p_all');
+save(fullfile(table_path,'rot0Desk_erdfm_p_all.mat'), 'rot0Desk_erdfm_p_all');
+save(fullfile(table_path,'rot90MoBI_erdfm_p_all.mat'), 'rot90MoBI_erdfm_p_all');
+save(fullfile(table_path,'rot90Desk_erdfm_p_all.mat'), 'rot90Desk_erdfm_p_all');
+save(fullfile(table_path,'rot180MoBI_erdfm_p_all.mat'), 'rot180MoBI_erdfm_p_all');
+save(fullfile(table_path,'rot180Desk_erdfm_p_all.mat'), 'rot180Desk_erdfm_p_all');
+save(fullfile(table_path,'rot270MoBI_erdfm_p_all.mat'), 'rot270MoBI_erdfm_p_all');
+save(fullfile(table_path,'rot270Desk_erdfm_p_all.mat'), 'rot270Desk_erdfm_p_all');
 
-save(fullfile(table_path,'rot0MoBI_erdfm_c.mat'), 'rot0MoBI_erdfm_c');
-save(fullfile(table_path,'rot0Desk_erdfm_c.mat'), 'rot0Desk_erdfm_c');
-save(fullfile(table_path,'rot90MoBI_erdfm_c.mat'), 'rot90MoBI_erdfm_c');
-save(fullfile(table_path,'rot90Desk_erdfm_c.mat'), 'rot90Desk_erdfm_c');
-save(fullfile(table_path,'rot180MoBI_erdfm_c.mat'), 'rot180MoBI_erdfm_c');
-save(fullfile(table_path,'rot180Desk_erdfm_c.mat'), 'rot180Desk_erdfm_c');
-save(fullfile(table_path,'rot270MoBI_erdfm_c.mat'), 'rot270MoBI_erdfm_c');
-save(fullfile(table_path,'rot270Desk_erdfm_c.mat'), 'rot270Desk_erdfm_c');
+save(fullfile(table_path,'rot0MoBI_erdall_p_guess.mat'), 'rot0MoBI_erdall_p_guess');
+save(fullfile(table_path,'rot0Desk_erdall_p_guess.mat'), 'rot0Desk_erdall_p_guess');
+save(fullfile(table_path,'rot90MoBI_erdall_p_guess.mat'), 'rot90MoBI_erdall_p_guess');
+save(fullfile(table_path,'rot90Desk_erdall_p_guess.mat'), 'rot90Desk_erdall_p_guess');
+save(fullfile(table_path,'rot180MoBI_erdall_p_guess.mat'), 'rot180MoBI_erdall_p_guess');
+save(fullfile(table_path,'rot180Desk_erdall_p_guess.mat'), 'rot180Desk_erdall_p_guess');
+save(fullfile(table_path,'rot270MoBI_erdall_p_guess.mat'), 'rot270MoBI_erdall_p_guess');
+save(fullfile(table_path,'rot270Desk_erdall_p_guess.mat'), 'rot270Desk_erdall_p_guess');
 
-save(fullfile(table_path,'rot0MoBI_erdall_c.mat'), 'rot0MoBI_erdall_c');
-save(fullfile(table_path,'rot0Desk_erdall_c.mat'), 'rot0Desk_erdall_c');
-save(fullfile(table_path,'rot90MoBI_erdall_c.mat'), 'rot90MoBI_erdall_c');
-save(fullfile(table_path,'rot90Desk_erdall_c.mat'), 'rot90Desk_erdall_c');
-save(fullfile(table_path,'rot180MoBI_erdall_c.mat'), 'rot180MoBI_erdall_c');
-save(fullfile(table_path,'rot180Desk_erdall_c.mat'), 'rot180Desk_erdall_c');
-save(fullfile(table_path,'rot270MoBI_erdall_c.mat'), 'rot270MoBI_erdall_c');
-save(fullfile(table_path,'rot270Desk_erdall_c.mat'), 'rot270Desk_erdall_c');
+save(fullfile(table_path,'rot0MoBI_erdall_p_all.mat'), 'rot0MoBI_erdall_p_all');
+save(fullfile(table_path,'rot0Desk_erdall_p_all.mat'), 'rot0Desk_erdall_p_all');
+save(fullfile(table_path,'rot90MoBI_erdall_p_all.mat'), 'rot90MoBI_erdall_p_all');
+save(fullfile(table_path,'rot90Desk_erdall_p_all.mat'), 'rot90Desk_erdall_p_all');
+save(fullfile(table_path,'rot180MoBI_erdall_p_all.mat'), 'rot180MoBI_erdall_p_all');
+save(fullfile(table_path,'rot180Desk_erdall_p_all.mat'), 'rot180Desk_erdall_p_all');
+save(fullfile(table_path,'rot270MoBI_erdall_p_all.mat'), 'rot270MoBI_erdall_p_all');
+save(fullfile(table_path,'rot270Desk_erdall_p_all.mat'), 'rot270Desk_erdall_p_all');
+
+save(fullfile(table_path,'rot0MoBI_erdfm_c_guess.mat'), 'rot0MoBI_erdfm_c_guess');
+save(fullfile(table_path,'rot0Desk_erdfm_c_guess.mat'), 'rot0Desk_erdfm_c_guess');
+save(fullfile(table_path,'rot90MoBI_erdfm_c_guess.mat'), 'rot90MoBI_erdfm_c_guess');
+save(fullfile(table_path,'rot90Desk_erdfm_c_guess.mat'), 'rot90Desk_erdfm_c_guess');
+save(fullfile(table_path,'rot180MoBI_erdfm_c_guess.mat'), 'rot180MoBI_erdfm_c_guess');
+save(fullfile(table_path,'rot180Desk_erdfm_c_guess.mat'), 'rot180Desk_erdfm_c_guess');
+save(fullfile(table_path,'rot270MoBI_erdfm_c_guess.mat'), 'rot270MoBI_erdfm_c_guess');
+save(fullfile(table_path,'rot270Desk_erdfm_c_guess.mat'), 'rot270Desk_erdfm_c_guess');
+
+save(fullfile(table_path,'rot0MoBI_erdfm_c.mat_all'), 'rot0MoBI_erdfm_c_all');
+save(fullfile(table_path,'rot0Desk_erdfm_c.mat_all'), 'rot0Desk_erdfm_c_all');
+save(fullfile(table_path,'rot90MoBI_erdfm_c.mat_all'), 'rot90MoBI_erdfm_c_all');
+save(fullfile(table_path,'rot90Desk_erdfm_c.mat_all'), 'rot90Desk_erdfm_c_all');
+save(fullfile(table_path,'rot180MoBI_erdfm_c.mat_all'), 'rot180MoBI_erdfm_c_all');
+save(fullfile(table_path,'rot180Desk_erdfm_c.mat_all'), 'rot180Desk_erdfm_c_all');
+save(fullfile(table_path,'rot270MoBI_erdfm_c.mat_all'), 'rot270MoBI_erdfm_c_all');
+save(fullfile(table_path,'rot270Desk_erdfm_c.mat_all'), 'rot270Desk_erdfm_c_all');
+
+save(fullfile(table_path,'rot0MoBI_erdall_c_guess.mat'), 'rot0MoBI_erdall_c_guess');
+save(fullfile(table_path,'rot0Desk_erdall_c_guess.mat'), 'rot0Desk_erdall_c_guess');
+save(fullfile(table_path,'rot90MoBI_erdall_c_guess.mat'), 'rot90MoBI_erdall_c_guess');
+save(fullfile(table_path,'rot90Desk_erdall_c_guess.mat'), 'rot90Desk_erdall_c_guess');
+save(fullfile(table_path,'rot180MoBI_erdall_c_guess.mat'), 'rot180MoBI_erdall_c_guess');
+save(fullfile(table_path,'rot180Desk_erdall_c_guess.mat'), 'rot180Desk_erdall_c_guess');
+save(fullfile(table_path,'rot270MoBI_erdall_c_guess.mat'), 'rot270MoBI_erdall_c_guess');
+save(fullfile(table_path,'rot270Desk_erdall_c_guess.mat'), 'rot270Desk_erdall_c_guess');
+
+save(fullfile(table_path,'rot0MoBI_erdall_c_all.mat'), 'rot0MoBI_erdall_c_all');
+save(fullfile(table_path,'rot0Desk_erdall_c_all.mat'), 'rot0Desk_erdall_c_all');
+save(fullfile(table_path,'rot90MoBI_erdall_c_all.mat'), 'rot90MoBI_erdall_c_all');
+save(fullfile(table_path,'rot90Desk_erdall_c_all.mat'), 'rot90Desk_erdall_c_all');
+save(fullfile(table_path,'rot180MoBI_erdall_c_all.mat'), 'rot180MoBI_erdall_c_all');
+save(fullfile(table_path,'rot180Desk_erdall_c_all.mat'), 'rot180Desk_erdall_c_all');
+save(fullfile(table_path,'rot270MoBI_erdall_c_all.mat'), 'rot270MoBI_erdall_c_all');
+save(fullfile(table_path,'rot270Desk_erdall_c_all.mat'), 'rot270Desk_erdall_c_all');
 
 
 
@@ -807,49 +924,81 @@ save(fullfile(table_path,'rot270Desk_erdall_c.mat'), 'rot270Desk_erdall_c');
 %---------------------------------------------------------------------------
 
 % loop over patients
-for Pi = 1:(count_p-1)
+for Pi = 1:numel(patients)
     
-    rot_meanTime_fm_p(:,1,Pi) = mean(rot0MoBI_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,2,Pi) = mean(rot0Desk_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,3,Pi) = mean(rot90MoBI_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,4,Pi) = mean(rot90Desk_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,5,Pi) = mean(rot180MoBI_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,6,Pi) = mean(rot180Desk_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,7,Pi) = mean(rot270MoBI_erdfm_p(:,:,Pi), 2);
-    rot_meanTime_fm_p(:,8,Pi) = mean(rot270Desk_erdfm_p(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,1,Pi)  = mean(rot0MoBI_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,2,Pi)  = mean(rot0Desk_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,3,Pi)  = mean(rot90MoBI_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,4,Pi)  = mean(rot90Desk_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,5,Pi)  = mean(rot180MoBI_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,6,Pi)  = mean(rot180Desk_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,7,Pi)  = mean(rot270MoBI_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,8,Pi)  = mean(rot270Desk_erdfm_p_guess(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,9,Pi)  = mean(rot0MoBI_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,10,Pi) = mean(rot0Desk_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,11,Pi) = mean(rot90MoBI_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,12,Pi) = mean(rot90Desk_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,13,Pi) = mean(rot180MoBI_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,14,Pi) = mean(rot180Desk_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,15,Pi) = mean(rot270MoBI_erdfm_p_all(:,:,Pi), 2);
+    rot_meanTime_fm_p(:,16,Pi) = mean(rot270Desk_erdfm_p_all(:,:,Pi), 2);
     
-    rot_meanTime_all_p(:,1,Pi) = mean(rot0MoBI_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,2,Pi) = mean(rot0Desk_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,3,Pi) = mean(rot90MoBI_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,4,Pi) = mean(rot90Desk_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,5,Pi) = mean(rot180MoBI_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,6,Pi) = mean(rot180Desk_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,7,Pi) = mean(rot270MoBI_erdall_p(:,:,Pi), 2);
-    rot_meanTime_all_p(:,8,Pi) = mean(rot270Desk_erdall_p(:,:,Pi), 2);
+    rot_meanTime_all_p(:,1,Pi)  = mean(rot0MoBI_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,2,Pi)  = mean(rot0Desk_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,3,Pi)  = mean(rot90MoBI_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,4,Pi)  = mean(rot90Desk_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,5,Pi)  = mean(rot180MoBI_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,6,Pi)  = mean(rot180Desk_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,7,Pi)  = mean(rot270MoBI_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,8,Pi)  = mean(rot270Desk_erdall_p_guess(:,:,Pi), 2);
+    rot_meanTime_all_p(:,9,Pi)  = mean(rot0MoBI_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,10,Pi) = mean(rot0Desk_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,11,Pi) = mean(rot90MoBI_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,12,Pi) = mean(rot90Desk_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,13,Pi) = mean(rot180MoBI_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,14,Pi) = mean(rot180Desk_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,15,Pi) = mean(rot270MoBI_erdall_p_all(:,:,Pi), 2);
+    rot_meanTime_all_p(:,16,Pi) = mean(rot270Desk_erdall_p_all(:,:,Pi), 2);
     
     
 end    
 
 % loop over controls
-for Ci = 1:(count_c-1)
+for Ci = 1:numel(controls)
     
-    rot_meanTime_fm_c(:,1,Ci) = mean(rot0MoBI_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,2,Ci) = mean(rot0Desk_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,3,Ci) = mean(rot90MoBI_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,4,Ci) = mean(rot90Desk_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,5,Ci) = mean(rot180MoBI_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,6,Ci) = mean(rot180Desk_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,7,Ci) = mean(rot270MoBI_erdfm_c(:,:,Ci), 2);
-    rot_meanTime_fm_c(:,8,Ci) = mean(rot270Desk_erdfm_c(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,1,Ci)  = mean(rot0MoBI_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,2,Ci)  = mean(rot0Desk_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,3,Ci)  = mean(rot90MoBI_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,4,Ci)  = mean(rot90Desk_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,5,Ci)  = mean(rot180MoBI_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,6,Ci)  = mean(rot180Desk_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,7,Ci)  = mean(rot270MoBI_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,8,Ci)  = mean(rot270Desk_erdfm_c_guess(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,9,Ci)  = mean(rot0MoBI_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,10,Ci) = mean(rot0Desk_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,11,Ci) = mean(rot90MoBI_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,12,Ci) = mean(rot90Desk_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,13,Ci) = mean(rot180MoBI_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,14,Ci) = mean(rot180Desk_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,15,Ci) = mean(rot270MoBI_erdfm_c_all(:,:,Ci), 2);
+    rot_meanTime_fm_c(:,16,Ci) = mean(rot270Desk_erdfm_c_all(:,:,Ci), 2);
     
-    rot_meanTime_all_c(:,1,Ci) = mean(rot0MoBI_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,2,Ci) = mean(rot0Desk_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,3,Ci) = mean(rot90MoBI_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,4,Ci) = mean(rot90Desk_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,5,Ci) = mean(rot180MoBI_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,6,Ci) = mean(rot180Desk_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,7,Ci) = mean(rot270MoBI_erdall_c(:,:,Ci), 2);
-    rot_meanTime_all_c(:,8,Ci) = mean(rot270Desk_erdall_c(:,:,Ci), 2);
+    rot_meanTime_all_c(:,1,Ci) = mean(rot0MoBI_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,2,Ci) = mean(rot0Desk_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,3,Ci) = mean(rot90MoBI_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,4,Ci) = mean(rot90Desk_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,5,Ci) = mean(rot180MoBI_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,6,Ci) = mean(rot180Desk_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,7,Ci) = mean(rot270MoBI_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,8,Ci) = mean(rot270Desk_erdall_c_guess(:,:,Ci), 2);
+    rot_meanTime_all_c(:,9,Ci) = mean(rot0MoBI_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,10,Ci) = mean(rot0Desk_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,11,Ci) = mean(rot90MoBI_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,12,Ci) = mean(rot90Desk_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,13,Ci) = mean(rot180MoBI_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,14,Ci) = mean(rot180Desk_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,15,Ci) = mean(rot270MoBI_erdall_c_all(:,:,Ci), 2);
+    rot_meanTime_all_c(:,16,Ci) = mean(rot270Desk_erdall_c_all(:,:,Ci), 2);
     
 end
 
@@ -869,7 +1018,7 @@ save(fullfile(table_path,'rot_meanTime_all_c.mat'), 'rot_meanTime_all_c');
 %---------------------------------------------------------------------------
 
 % loop over patients
-for Pi = 1:(count_p-1)
+for Pi = 1:numel(patients)
     
     rot_meanEloc_fm_p(Pi,:)  = mean(rot_meanTime_fm_p(:,:,Pi), 1);
     rot_meanEloc_all_p(Pi,:) = mean(rot_meanTime_all_p(:,:,Pi), 1);
@@ -877,7 +1026,7 @@ for Pi = 1:(count_p-1)
 end    
 
 % loop over controls
-for Ci = 1:(count_c-1)
+for Ci = 1:numel(controls)
     
     rot_meanEloc_fm_c(Ci,:)  = mean(rot_meanTime_fm_c(:,:,Ci), 1);
     rot_meanEloc_all_c(Ci,:) = mean(rot_meanTime_all_c(:,:,Ci), 1);
@@ -891,7 +1040,10 @@ table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\A
 patients = cellstr(string(patients));
 controls = cellstr(string(controls));
 
-column_names = {'Rotation0-MoBI','Rotation0-Desktop','Rotation90-MoBI','Rotation90-Desktop','Rotation180-MoBI','Rotation180-Desktop','Rotation270-MoBI','Rotation270-Desktop'};
+column_names = {'Rotation0-MoBI_guess','Rotation0-Desktop_guess','Rotation90-MoBI_guess','Rotation90-Desktop_guess',...
+    'Rotation180-MoBI_guess','Rotation180-Desktop_guess','Rotation270-MoBI_guess','Rotation270-Desktop_guess',...
+    'Rotation0-MoBI_all','Rotation0-Desktop_all','Rotation90-MoBI_all','Rotation90-Desktop_all',...
+    'Rotation180-MoBI_all','Rotation180-Desktop_all','Rotation270-MoBI_all','Rotation270-Desktop_all'};
 
 % create theta tables and save them
 %-----------------------------------
