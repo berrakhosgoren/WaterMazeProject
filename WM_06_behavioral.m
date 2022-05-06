@@ -1,4 +1,4 @@
-function [search_duration,positions,distance_error] = WM_06_behavioral(EEG)
+function [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral(EEG)
 
     % 1. 
     % add event codes that indicates the trial number of search trials
@@ -82,24 +82,42 @@ function [search_duration,positions,distance_error] = WM_06_behavioral(EEG)
     % calculate search durations
 
     % find search start and found latencies in the session
-    search_start = [];
-    search_found = [];
+    search_start_all = [];
+    search_found_all = [];
+    search_start_2_3 = [];
+    search_found_2_3 = [];
         
     a = 1;
     b = 1;
     % iterate over all events
     for i = 1:numel(EEG.event(:))
-        if contains({EEG.event(i).type}, 'searchtrial:start') == 1 && EEG.event(i).order ~= 1
-            search_start(a) = (EEG.event(i).latency)*4/1000;
+        if contains({EEG.event(i).type}, 'searchtrial:start') == 1 
+            search_start_all(a) = (EEG.event(i).latency)*4/1000;
             a = a + 1;
-        elseif contains({EEG.event(i).type}, 'searchtrial:found') == 1 && EEG.event(i).order ~= 1
-            search_found(b) = (EEG.event(i).latency)*4/1000;
+        elseif contains({EEG.event(i).type}, 'searchtrial:found') == 1 
+            search_found_all(b) = (EEG.event(i).latency)*4/1000;
             b = b + 1;
         end
     end
     
     % subtract the start latencies from found latencies
-    search_duration = (search_found - search_start)';
+    search_duration_all = (search_found_all - search_start_all)';
+    
+    
+    c = 1;
+    d = 1;
+    % iterate over all events
+    for i = 1:numel(EEG.event(:))
+        if contains({EEG.event(i).type}, 'searchtrial:start') == 1 && EEG.event(i).order ~= 1
+            search_start_2_3(c) = (EEG.event(i).latency)*4/1000;
+            c = c + 1;
+        elseif contains({EEG.event(i).type}, 'searchtrial:found') == 1 && EEG.event(i).order ~= 1
+            search_found_2_3(d) = (EEG.event(i).latency)*4/1000;
+            d = d + 1;
+        end
+    end
+    
+    search_duration_2_3 = (search_found_2_3 - search_start_2_3)';
     
     
     % 3.
