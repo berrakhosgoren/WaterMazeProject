@@ -1459,10 +1459,11 @@ for Pi = 1:numel(patients)
     preprocessedFileNameEEG    = [num2str(subject') '_cleaned_with_ICA.set'];
     EEG                        =  pop_loadset('filepath', participantFolder ,'filename', preprocessedFileNameEEG);
     
-    [search_duration1,positions1,distance_error1] = WM_06_behavioral(EEG);
-    searchduration_patients(:,Pi) = search_duration1;
-    positions_patients(:,:,Pi)    = positions1;
-    distance_error_patients(:,Pi) = distance_error1;
+    [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral(EEG);
+    searchduration_all_patients(:,Pi) = search_duration_all;
+    searchduration_2_3_patients(:,Pi) = search_duration_2_3;
+    positions_patients(:,:,Pi)        = positions;
+    distance_error_patients(:,Pi)     = distance_error;
     
 
 end
@@ -1476,10 +1477,11 @@ for Ci = 1:numel(controls)
     preprocessedFileNameEEG    = [num2str(subject') '_cleaned_with_ICA.set'];
     EEG                        =  pop_loadset('filepath', participantFolder ,'filename', preprocessedFileNameEEG);
     
-    [search_duration2,positions2,distance_error2] = WM_06_behavioral(EEG);
-    searchduration_controls(:,Ci) = search_duration2;
-    positions_controls(:,:,Ci)    = positions2;
-    distance_error_controls(:,Ci) = distance_error2;
+    [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral(EEG);
+    searchduration_all_controls(:,Ci) = search_duration_all;
+    searchduration_2_3_controls(:,Ci) = search_duration_2_3;
+    positions_controls(:,:,Ci)    = positions;
+    distance_error_controls(:,Ci) = distance_error;
     
 
 end
@@ -1488,70 +1490,21 @@ end
 
 table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral';
 
-save(fullfile(table_path,'searchduration_patients.mat'), 'searchduration_patients');
-save(fullfile(table_path,'searchduration_controls.mat'), 'searchduration_controls');
+save(fullfile(table_path,'searchduration_all_patients.mat'), 'searchduration_all_patients');
+save(fullfile(table_path,'searchduration_all_controls.mat'), 'searchduration_all_controls');
+save(fullfile(table_path,'searchduration_2_3_patients.mat'), 'searchduration_2_3_patients');
+save(fullfile(table_path,'searchduration_2_3_controls.mat'), 'searchduration_2_3_controls');
 save(fullfile(table_path,'positions_patients.mat'), 'positions_patients');
 save(fullfile(table_path,'positions_controls.mat'), 'positions_controls');
 save(fullfile(table_path,'distance_error_patients.mat'), 'distance_error_patients');
 save(fullfile(table_path,'distance_error_controls.mat'), 'distance_error_controls');
 
 
-% Second: Create ERD/Intertrial Variance matricies for regression analysis
-%----------------------------------------------------------------------------
-
-
-% loop over patients
-for Pi = 1:numel(patients)
-    
-    subject                    = patients(Pi);
-    participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
-    epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
-    epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
-    epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
-    epochedEEG_baseline        =  pop_loadset('filepath', participantFolder ,'filename', epochedBaselineFileNameEEG);
-    
-    [erd_encoding_2_3, var_epoch_en, var_epoch_re] = WM_06_epochtheta(epochedEEG,epochedEEG_baseline);
-    
-    p_erd_encoding_2_3(Pi,:) = erd_encoding_2_3;
-    p_var_epoch_en(:,:,Pi)   = var_epoch_en;
-    p_var_epoch_re(:,:,Pi)   = var_epoch_re;
-
-end
-
-
-% loop over controls
-for Ci = 1:numel(controls)
-    
-    subject                    = controls(Ci);
-    participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
-    epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
-    epochedBaselineFileNameEEG = [num2str(subject') '_epoched_baseline.set'];
-    epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
-    epochedEEG_baseline        =  pop_loadset('filepath', participantFolder ,'filename', epochedBaselineFileNameEEG);
-    
-    [erd_encoding_2_3, var_epoch_en, var_epoch_re] = WM_06_epochtheta(epochedEEG,epochedEEG_baseline);
-    
-    c_erd_encoding_2_3(Ci,:) = erd_encoding_2_3;
-    c_var_epoch_en(:,:,Ci)   = var_epoch_en;
-    c_var_epoch_re(:,:,Ci)   = var_epoch_re;
-
-end
-
-% save them
-
-table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc';
-
-save(fullfile(table_path,'p_erd_encoding_2_3.mat'), 'p_erd_encoding_2_3');
-save(fullfile(table_path,'p_var_epoch_en.mat'), 'p_var_epoch_en');
-save(fullfile(table_path,'p_var_epoch_re.mat'), 'p_var_epoch_re');
-save(fullfile(table_path,'c_erd_encoding_2_3.mat'), 'c_erd_encoding_2_3');
-save(fullfile(table_path,'c_var_epoch_en.mat'), 'c_var_epoch_en');
-save(fullfile(table_path,'c_var_epoch_re.mat'), 'c_var_epoch_re');
-
-% Third: Regression Graph
+% Second: Regression Graphs
 %-----------------------------------------------------------------------------
 
 % WM_06_regression
+
 
 %% STEP 07: Statistical Analysis
 
