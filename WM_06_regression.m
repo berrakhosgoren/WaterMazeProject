@@ -760,7 +760,7 @@ path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
 
 % iterate over patients
-for pi = 1:9
+for pi = 1:10
     
     if rem(pi,2) == 1
         
@@ -872,7 +872,7 @@ end
 
 
 % iterate over controls
-for ci = 1:16
+for ci = 1:18
     
     if rem(ci,2) == 1
         
