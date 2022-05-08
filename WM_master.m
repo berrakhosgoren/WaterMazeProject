@@ -1027,22 +1027,40 @@ for Pi = 1:numel(patients)
     topoplot(meanTime_allEloc_pat(:,6,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Retrieval-Desktop (guess trials)','fontweight','bold','fontsize',18)
 
-    % Retrieval-MoBI (all trials)
+    % Retrieval-MoBI (search trials)
     f7 = figure(7);
-    set(gcf,'Name','Patients Retrieval-MoBI (all trials)')
+    set(gcf,'Name','Patients Retrieval-MoBI (search trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,7,Pi), epochedEEG.chanlocs)
-    sgtitle('Patients Retrieval-MoBI (all trials)','fontweight','bold','fontsize',18)
+    sgtitle('Patients Retrieval-MoBI (search trials)','fontweight','bold','fontsize',18)
     
-    % Retrieval-Desktop (all trials) 
+    % Retrieval-Desktop (search trials) 
     f8 = figure(8);
-    set(gcf,'Name','Patients Retrieval-Desktop (all trials)')
+    set(gcf,'Name','Patients Retrieval-Desktop (search trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(3,4,Pi)
     title(num2str(subject))
     topoplot(meanTime_allEloc_pat(:,8,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Retrieval-Desktop (search trials)','fontweight','bold','fontsize',18)
+    
+    % Retrieval-MoBI (all trials)
+    f9 = figure(9);
+    set(gcf,'Name','Patients Retrieval-MoBI (all trials)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(meanTime_allEloc_pat(:,9,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Retrieval-MoBI (all trials)','fontweight','bold','fontsize',18)
+    
+    % Retrieval-Desktop (all trials) 
+    f10 = figure(10);
+    set(gcf,'Name','Patients Retrieval-Desktop (all trials)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(meanTime_allEloc_pat(:,10,Pi), epochedEEG.chanlocs)
     sgtitle('Patients Retrieval-Desktop (all trials)','fontweight','bold','fontsize',18)
     
 end
@@ -1057,7 +1075,7 @@ for Ci = 1:numel(controls)
     epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
 
     % Encoding-MoBI (all trials)
-    f9 = figure(9);
+    f11 = figure(11);
     set(gcf,'Name','Controls Encoding-MoBI (all trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1066,7 +1084,7 @@ for Ci = 1:numel(controls)
     sgtitle('Controls Encoding-MoBI (all trials)','fontweight','bold','fontsize',18)
 
     % Encoding-Desktop (all trials)
-    f10 = figure(10);
+    f12 = figure(12);
     set(gcf,'Name','Controls Encoding-Desktop (all trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1075,7 +1093,7 @@ for Ci = 1:numel(controls)
     sgtitle('Controls Encoding-Desktop (all trials)','fontweight','bold','fontsize',18)
     
     % Encoding-MoBI (2 & 3)
-    f11 = figure(11);
+    f13 = figure(13);
     set(gcf,'Name','Controls Encoding-MoBI (2 & 3)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1084,7 +1102,7 @@ for Ci = 1:numel(controls)
     sgtitle('Controls Encoding-MoBI (2 & 3)','fontweight','bold','fontsize',18)
 
     % Encoding-Desktop (2 & 3)
-    f12 = figure(12);
+    f14 = figure(14);
     set(gcf,'Name','Controls Encoding-Desktop (2 & 3)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1093,7 +1111,7 @@ for Ci = 1:numel(controls)
     sgtitle('Controls Encoding-Desktop (2 & 3)','fontweight','bold','fontsize',18)
     
     % Retrieval-MoBI (guess trials)
-    f13 = figure(13);
+    f15 = figure(15);
     set(gcf,'Name','Controls Retrieval-MoBI (guess trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1102,7 +1120,7 @@ for Ci = 1:numel(controls)
     sgtitle('Controls Retrieval-MoBI (guess trials)','fontweight','bold','fontsize',18)
     
     % Retrieval-Desktop (guess trials)
-    f14 = figure(14);
+    f16 = figure(16);
     set(gcf,'Name','Contols Retrieval-Desktop (guess trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
@@ -1111,21 +1129,39 @@ for Ci = 1:numel(controls)
     sgtitle('Contols Retrieval-Desktop (guess trials)','fontweight','bold','fontsize',18)
     
     % Retrieval-MoBI (all trials)
-    f15 = figure(15);
-    set(gcf,'Name','Controls Retrieval-MoBI (all trials)')
+    f17 = figure(17);
+    set(gcf,'Name','Controls Retrieval-MoBI (search trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,7,Ci), epochedEEG.chanlocs)
-    sgtitle('Controls Retrieval-MoBI (all trials)','fontweight','bold','fontsize',18)
+    sgtitle('Controls Retrieval-MoBI (search trials)','fontweight','bold','fontsize',18)
     
     % Retrieval-Desktop (all trials)
-    f16 = figure(16);
-    set(gcf,'Name','Contols Retrieval-Desktop (all trials)')
+    f18 = figure(18);
+    set(gcf,'Name','Contols Retrieval-Desktop (search trials)')
     set(gcf, 'Position', get(0, 'Screensize'));
     subplot(4,5,Ci)
     title(num2str(subject))
     topoplot(meanTime_allEloc_cont(:,8,Ci), epochedEEG.chanlocs)
+    sgtitle('Contols Retrieval-Desktop (search trials)','fontweight','bold','fontsize',18)
+    
+    % Retrieval-MoBI (all trials)
+    f19 = figure(19);
+    set(gcf,'Name','Controls Retrieval-MoBI (all trials)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(meanTime_allEloc_cont(:,9,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Retrieval-MoBI (all trials)','fontweight','bold','fontsize',18)
+    
+    % Retrieval-Desktop (all trials)
+    f20 = figure(20);
+    set(gcf,'Name','Contols Retrieval-Desktop (all trials)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(meanTime_allEloc_cont(:,10,Ci), epochedEEG.chanlocs)
     sgtitle('Contols Retrieval-Desktop (all trials)','fontweight','bold','fontsize',18)
 
 end
@@ -1134,25 +1170,10 @@ end
 %-----------------------------------------------------------------------
 % create average topoplots for patients and controls
 
-avg_p_en_m_all = mean(meanTime_allEloc_pat(:,1),3); % Patients - Encoding MoBI (all)
-avg_p_en_d_all = mean(meanTime_allEloc_pat(:,2),3); % Patients - Encoding Desktop (all)
-avg_p_en_m_2_3 = mean(meanTime_allEloc_pat(:,3),3); % Patients - Encoding MoBI (2 & 3)
-avg_p_en_d_2_3 = mean(meanTime_allEloc_pat(:,4),3); % Patients - Encoding Desktop (2 & 3)
+avg_pat = mean(meanTime_allEloc_pat(:,:,:),3); % Patients
 
-avg_p_re_m_guess = mean(meanTime_allEloc_pat(:,5),3); % Patients - Retrieval MoBI (guess)
-avg_p_re_d_guess = mean(meanTime_allEloc_pat(:,6),3); % Patients - Retrieval Desktop (guess)
-avg_p_re_m_all = mean(meanTime_allEloc_pat(:,7),3); % Patients - Retrieval MoBI (all)
-avg_p_re_d_all = mean(meanTime_allEloc_pat(:,8),3); % Patients - Retrieval Desktop (all)
+avg_cont = mean(meanTime_allEloc_cont(:,:,:),3); % Controls
 
-avg_c_en_m_all = mean(meanTime_allEloc_cont(:,1),3); % Controls - Encoding MoBI (all)
-avg_c_en_d_all = mean(meanTime_allEloc_cont(:,2),3); % Controls - Encoding Desktop (all)
-avg_c_en_m_2_3 = mean(meanTime_allEloc_cont(:,3),3); % Controls - Encoding MoBI (2 & 3)
-avg_c_en_d_2_3 = mean(meanTime_allEloc_cont(:,4),3); % Controls - Encoding Desktop (2 & 3)
-
-avg_c_re_m_guess = mean(meanTime_allEloc_cont(:,5),3); % Controls - Retrieval MoBI (guess)
-avg_c_re_d_guess = mean(meanTime_allEloc_cont(:,6),3); % Controls - Retrieval Desktop (guess)
-avg_c_re_m_all = mean(meanTime_allEloc_cont(:,7),3); % Controls - Retrieval MoBI (all)
-avg_c_re_d_all = mean(meanTime_allEloc_cont(:,8),3); % Controls - Retrieval Desktop (all)
 
 % select sample channel locations
 patientEEG = pop_loadset('81001_epoched.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
@@ -1161,104 +1182,130 @@ controlEEG = pop_loadset('82001_epoched.set','C:\Users\BERRAK\Documents\GitHub\W
 
 % create encoding figure (all trials)
 
-f17 = figure(17);
+f21 = figure(21);
 
 set(gcf,'Name','Encoding (all trials)')
 set(gcf, 'Position', get(0, 'Screensize'));
 
 subplot(2,2,1)
 title('Patient MoBI')
-topoplot(avg_p_en_m_all, patientEEG.chanlocs)
+topoplot(avg_pat(:,1), patientEEG.chanlocs)
 
 subplot(2,2,2)
 title('Patient Desktop')
-topoplot(avg_p_en_d_all, patientEEG.chanlocs)
+topoplot(avg_pat(:,2), patientEEG.chanlocs)
 
 subplot(2,2,3)
 title('Control MoBI')
-topoplot(avg_c_en_m_all, controlEEG.chanlocs)
+topoplot(avg_cont(:,1), controlEEG.chanlocs)
 
 subplot(2,2,4)
 title('Control Desktop')
-topoplot(avg_c_en_d_all, controlEEG.chanlocs)
+topoplot(avg_cont(:,2), controlEEG.chanlocs)
 
 sgtitle('Encoding (all trials)','fontweight','bold','fontsize',18)
 
 
 % create encoding figure (2 & 3)
 
-f18 = figure(18);
+f22 = figure(22);
 
 set(gcf,'Name','Encoding (2 & 3)')
 set(gcf, 'Position', get(0, 'Screensize'));
 
 subplot(2,2,1)
 title('Patient MoBI')
-topoplot(avg_p_en_m_2_3, patientEEG.chanlocs)
+topoplot(avg_pat(:,3), patientEEG.chanlocs)
 
 subplot(2,2,2)
 title('Patient Desktop')
-topoplot(avg_p_en_d_2_3, patientEEG.chanlocs)
+topoplot(avg_pat(:,4), patientEEG.chanlocs)
 
 subplot(2,2,3)
 title('Control MoBI')
-topoplot(avg_c_en_m_2_3, controlEEG.chanlocs)
+topoplot(avg_cont(:,3), controlEEG.chanlocs)
 
 subplot(2,2,4)
 title('Control Desktop')
-topoplot(avg_c_en_d_2_3, controlEEG.chanlocs)
+topoplot(avg_cont(:,4), controlEEG.chanlocs)
 
 sgtitle('Encoding (2 & 3)','fontweight','bold','fontsize',18)
 
 
 % create retrieval figure (guess trials)
 
-f19 = figure(19);
+f23 = figure(23);
 
 set(gcf,'Name','Retrieval (guess trials)')
 set(gcf, 'Position', get(0, 'Screensize'));
 
 subplot(2,2,1)
 title('Patient MoBI')
-topoplot(avg_p_re_m_guess, patientEEG.chanlocs)
+topoplot(avg_pat(:,5), patientEEG.chanlocs)
 
 subplot(2,2,2)
 title('Patient Desktop')
-topoplot(avg_p_re_d_guess, patientEEG.chanlocs)
+topoplot(avg_pat(:,6), patientEEG.chanlocs)
 
 subplot(2,2,3)
 title('Control MoBI')
-topoplot(avg_c_re_m_guess, controlEEG.chanlocs)
+topoplot(avg_cont(:,5), controlEEG.chanlocs)
 
 subplot(2,2,4)
 title('Control Desktop')
-topoplot(avg_c_re_d_guess, controlEEG.chanlocs)
+topoplot(avg_cont(:,6), controlEEG.chanlocs)
 
 sgtitle('Retrieval (guess trials)','fontweight','bold','fontsize',18)
 
 
+% create retrieval figure (search trials)
+
+f24 = figure(24);
+
+set(gcf,'Name','Retrieval (search trials)')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Patient MoBI')
+topoplot(avg_pat(:,7), patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Patient Desktop')
+topoplot(avg_pat(:,8), patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Control MoBI')
+topoplot(avg_cont(:,7), controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Control Desktop')
+topoplot(avg_cont(:,8), controlEEG.chanlocs)
+
+sgtitle('Retrieval (search trials)','fontweight','bold','fontsize',18)
+
+
 % create retrieval figure (all trials)
 
-f20 = figure(20);
+f25 = figure(25);
 
 set(gcf,'Name','Retrieval (all trials)')
 set(gcf, 'Position', get(0, 'Screensize'));
 
 subplot(2,2,1)
 title('Patient MoBI')
-topoplot(avg_p_re_m_all, patientEEG.chanlocs)
+topoplot(avg_pat(:,9), patientEEG.chanlocs)
 
 subplot(2,2,2)
 title('Patient Desktop')
-topoplot(avg_p_re_d_all, patientEEG.chanlocs)
+topoplot(avg_pat(:,10), patientEEG.chanlocs)
 
 subplot(2,2,3)
 title('Control MoBI')
-topoplot(avg_c_re_m_all, controlEEG.chanlocs)
+topoplot(avg_cont(:,9), controlEEG.chanlocs)
 
 subplot(2,2,4)
 title('Control Desktop')
-topoplot(avg_c_re_d_all, controlEEG.chanlocs)
+topoplot(avg_cont(:,10), controlEEG.chanlocs)
 
 sgtitle('Retrieval (all trials)','fontweight','bold','fontsize',18)
 
@@ -1266,14 +1313,317 @@ sgtitle('Retrieval (all trials)','fontweight','bold','fontsize',18)
 % save the figures
 path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
-f = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20];
+f = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25];
 
-for i = 1:20
+for i = 1:25
     
     saveas(f(i),fullfile(path,[['topo' num2str(i)],'.png']));
 
 end
 
+
+%-------------------------------------------------------------------------------------------------
+
+
+% create individual topoplots for rotated-unrotated retrieval trials
+
+% load theta matricies 
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime\Rotation\rot_meanTime_all_p.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverTime\Rotation\rot_meanTime_all_c.mat')
+
+
+% loop over patients
+for Pi = 1:numel(patients)
+    
+    subject                    = patients(Pi);
+    participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
+    epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
+
+    % Patients Rotation - 0 (MoBI)
+    f26 = figure(26);
+    set(gcf,'Name','Patients Rotation - 0 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,1,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 0 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 0 (Desktop)
+    f27 = figure(27);
+    set(gcf,'Name','Patients Rotation - 0 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,2,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 0 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 90 (MoBI)
+    f28 = figure(28);
+    set(gcf,'Name','Patients Rotation - 90 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,3,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 90 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 90 (Desktop)
+    f29 = figure(29);
+    set(gcf,'Name','Patients Rotation - 90 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,4,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 90 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 180 (MoBI)
+    f30 = figure(30);
+    set(gcf,'Name','Patients Rotation - 180 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,5,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 180 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 180 (Dekstop)
+    f31 = figure(31);
+    set(gcf,'Name','Patients Rotation - 180 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,6,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 180 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 270 (MoBI)
+    f32 = figure(32);
+    set(gcf,'Name','Patients Rotation - 270 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,7,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 270 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Patients Rotation - 270 (Desktop)
+    f33 = figure(33);
+    set(gcf,'Name','Patients Rotation - 270 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(3,4,Pi)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_p(:,8,Pi), epochedEEG.chanlocs)
+    sgtitle('Patients Rotation - 270 (Desktop)','fontweight','bold','fontsize',18)
+
+end
+
+% loop over controls
+for Ci = 1:numel(controls)
+    
+    subject                    = controls(Ci);
+    participantFolder          = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedFileNameEEG         = [num2str(subject') '_epoched.set'];
+    epochedEEG                 =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);
+    
+    
+    % Controls Rotation - 0 (MoBI)
+    f34 = figure(34);
+    set(gcf,'Name','Controls Rotation - 0 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,1,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 0 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 0 (Desktop)
+    f35 = figure(35);
+    set(gcf,'Name','Controls Rotation - 0 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,2,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 0 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 90 (MoBI)
+    f36 = figure(36);
+    set(gcf,'Name','Controls Rotation - 90 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,3,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 90 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 90 (Desktop)
+    f37 = figure(37);
+    set(gcf,'Name','Controls Rotation - 90 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,4,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 90 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 180 (MoBI)
+    f38 = figure(38);
+    set(gcf,'Name','Controls Rotation - 180 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,5,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 180 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 180 (Dekstop)
+    f39 = figure(39);
+    set(gcf,'Name','Controls Rotation - 180 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,6,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 180 (Desktop)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 270 (MoBI)
+    f40 = figure(40);
+    set(gcf,'Name','Controls Rotation - 270 (MoBI)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,7,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 270 (MoBI)','fontweight','bold','fontsize',18)
+    
+    % Controls Rotation - 270 (Desktop)
+    f41 = figure(41);
+    set(gcf,'Name','Controls Rotation - 270 (Desktop)')
+    set(gcf, 'Position', get(0, 'Screensize'));
+    subplot(4,5,Ci)
+    title(num2str(subject))
+    topoplot(rot_meanTime_all_c(:,8,Ci), epochedEEG.chanlocs)
+    sgtitle('Controls Rotation - 270 (Desktop)','fontweight','bold','fontsize',18)
+    
+end
+
+
+% create average topoplots for rotation trials
+
+avg_rot_pat = mean(rot_meanTime_all_p(:,:,:),3); % Patients - Encoding MoBI (all)
+avg_rot_cont = mean(rot_meanTime_all_c(:,:,:),3); % Controls - Encoding MoBI (all)
+
+% select sample channel locations
+patientEEG = pop_loadset('81001_epoched.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+controlEEG = pop_loadset('82001_epoched.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\82001');
+
+
+% create rotation - 0 figure
+
+f42 = figure(42);
+
+set(gcf,'Name','Rotation 0')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Patient MoBI')
+topoplot(avg_rot_pat(:,1), patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Patient Desktop')
+topoplot(avg_rot_pat(:,2), patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Control MoBI')
+topoplot(avg_rot_cont(:,1), controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Control Desktop')
+topoplot(avg_rot_cont(:,2), controlEEG.chanlocs)
+
+sgtitle('Rotation 0','fontweight','bold','fontsize',18)
+
+
+% create encoding figure (2 & 3)
+
+f43 = figure(43);
+
+set(gcf,'Name','Rotation 90)')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Patient MoBI')
+topoplot(avg_rot_pat(:,3), patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Patient Desktop')
+topoplot(avg_rot_pat(:,4), patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Control MoBI')
+topoplot(avg_rot_cont(:,3), controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Control Desktop')
+topoplot(avg_rot_cont(:,4), controlEEG.chanlocs)
+
+sgtitle('Rotation 90','fontweight','bold','fontsize',18)
+
+
+% create retrieval figure (guess trials)
+
+f44 = figure(44);
+
+set(gcf,'Name','Rotation 180')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Patient MoBI')
+topoplot(avg_rot_pat(:,5), patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Patient Desktop')
+topoplot(avg_rot_pat(:,6), patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Control MoBI')
+topoplot(avg_rot_cont(:,5), controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Control Desktop')
+topoplot(avg_rot_cont(:,6), controlEEG.chanlocs)
+
+sgtitle('Rotation 180','fontweight','bold','fontsize',18)
+
+
+% create retrieval figure (search trials)
+
+f45 = figure(45);
+
+set(gcf,'Name','Rotation 270')
+set(gcf, 'Position', get(0, 'Screensize'));
+
+subplot(2,2,1)
+title('Patient MoBI')
+topoplot(avg_rot_pat(:,7), patientEEG.chanlocs)
+
+subplot(2,2,2)
+title('Patient Desktop')
+topoplot(avg_rot_pat(:,8), patientEEG.chanlocs)
+
+subplot(2,2,3)
+title('Control MoBI')
+topoplot(avg_rot_cont(:,7), controlEEG.chanlocs)
+
+subplot(2,2,4)
+title('Control Desktop')
+topoplot(avg_rot_cont(:,8), controlEEG.chanlocs)
+
+sgtitle('Rotation 270','fontweight','bold','fontsize',18)
+
+
+% save the figures
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
+
+f = [f26,f27,f28,f29,f30,f31,f32,f33,f34,f35,f36,f37,f38,f39,f40,f41,f42,f43,f44,f45];
+a = 26:45;
+
+for i = 1:20
+   
+    
+    saveas(f(i),fullfile(path,[['topo' num2str(a(i))],'.png']));
+
+end
 
 
 %% STEP 05: Theta Power Graphs
