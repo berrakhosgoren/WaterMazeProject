@@ -223,7 +223,8 @@ for Pi = 1:numel(participantsPreproc)
     % create different matricies for patients and controls
     if contains(num2str(subject), '81') == 1
      
-        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc, var_epoch_ret] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
+        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3,...
+            var_epoch_ret_guess, var_epoch_ret_search, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
         
         varEnMobi_all_fm_pat(:,:,count_p)  = variance_fm(:,:,1);
         varEnDesk_all_fm_pat(:,:,count_p)  = variance_fm(:,:,2);
@@ -279,24 +280,25 @@ for Pi = 1:numel(participantsPreproc)
         erdRetMobi_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,9);
         erdRetDesk_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,10);
        
-        varEpoch_enc_all_Mobi_p(:,count_p) = var_epoch_enc(:,1);
-        varEpoch_enc_all_Desk_p(:,count_p) = var_epoch_enc(:,2);
-        varEpoch_enc_2_3_Mobi_p(:,count_p) = var_epoch_enc(:,3);
-        varEpoch_enc_2_3_Desk_p(:,count_p) = var_epoch_enc(:,4);
+        varEpoch_enc_all_Mobi_p(:,count_p) = var_epoch_enc_all(:,1);
+        varEpoch_enc_all_Desk_p(:,count_p) = var_epoch_enc_all(:,2);
+        varEpoch_enc_2_3_Mobi_p(:,count_p) = var_epoch_enc_2_3(:,1);
+        varEpoch_enc_2_3_Desk_p(:,count_p) = var_epoch_enc_2_3(:,2);
         
-        varEpoch_ret_guess_Mobi_p(:,count_p)  = var_epoch_ret(:,1);
-        varEpoch_ret_guess_Desk_p(:,count_p)  = var_epoch_ret(:,2);
-        varEpoch_ret_search_Mobi_p(:,count_p) = var_epoch_ret(:,3);
-        varEpoch_ret_search_Desk_p(:,count_p) = var_epoch_ret(:,4);
-        varEpoch_ret_all_Mobi_p(:,count_p)    = var_epoch_ret(:,5);
-        varEpoch_ret_all_Desk_p(:,count_p)    = var_epoch_ret(:,6);
+        varEpoch_ret_guess_Mobi_p(:,count_p)  = var_epoch_ret_guess(:,1);
+        varEpoch_ret_guess_Desk_p(:,count_p)  = var_epoch_ret_guess(:,2);
+        varEpoch_ret_search_Mobi_p(:,count_p) = var_epoch_ret_search(:,1);
+        varEpoch_ret_search_Desk_p(:,count_p) = var_epoch_ret_search(:,2);
+        varEpoch_ret_all_Mobi_p(:,count_p)    = var_epoch_ret_all(:,1);
+        varEpoch_ret_all_Desk_p(:,count_p)    = var_epoch_ret_all(:,2);
         
         patients(count_p) = subject;
         count_p = count_p + 1;
         
     else
         
-        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc, var_epoch_ret] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
+        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3,...
+            var_epoch_ret_guess, var_epoch_ret_search, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
         
         varEnMobi_all_fm_cont(:,:,count_c)  = variance_fm(:,:,1);
         varEnDesk_all_fm_cont(:,:,count_c)  = variance_fm(:,:,2);
@@ -352,17 +354,17 @@ for Pi = 1:numel(participantsPreproc)
         erdRetMobi_all_allEloc_cont(:,:,count_c)    = erd_allEloc(:,:,9);
         erdRetDesk_all_allEloc_cont(:,:,count_c)    = erd_allEloc(:,:,10);
        
-        varEpoch_enc_all_Mobi_c(:,count_c) = var_epoch_enc(:,1);
-        varEpoch_enc_all_Desk_c(:,count_c) = var_epoch_enc(:,2);
-        varEpoch_enc_2_3_Mobi_c(:,count_c) = var_epoch_enc(:,3);
-        varEpoch_enc_2_3_Desk_c(:,count_c) = var_epoch_enc(:,4);
+        varEpoch_enc_all_Mobi_c(:,count_c) = var_epoch_enc_all(:,1);
+        varEpoch_enc_all_Desk_c(:,count_c) = var_epoch_enc_all(:,2);
+        varEpoch_enc_2_3_Mobi_c(:,count_c) = var_epoch_enc_2_3(:,1);
+        varEpoch_enc_2_3_Desk_c(:,count_c) = var_epoch_enc_2_3(:,2);
         
-        varEpoch_ret_guess_Mobi_c(:,count_c)  = var_epoch_ret(:,1);
-        varEpoch_ret_guess_Desk_c(:,count_c)  = var_epoch_ret(:,2);
-        varEpoch_ret_search_Mobi_c(:,count_c) = var_epoch_ret(:,3);
-        varEpoch_ret_search_Desk_c(:,count_c) = var_epoch_ret(:,4);
-        varEpoch_ret_all_Mobi_c(:,count_c)    = var_epoch_ret(:,5);
-        varEpoch_ret_all_Desk_c(:,count_c)    = var_epoch_ret(:,6);
+        varEpoch_ret_guess_Mobi_c(:,count_c)  = var_epoch_ret_guess(:,1);
+        varEpoch_ret_guess_Desk_c(:,count_c)  = var_epoch_ret_guess(:,2);
+        varEpoch_ret_search_Mobi_c(:,count_c) = var_epoch_ret_search(:,1);
+        varEpoch_ret_search_Desk_c(:,count_c) = var_epoch_ret_search(:,2);
+        varEpoch_ret_all_Mobi_c(:,count_c)    = var_epoch_ret_all(:,1);
+        varEpoch_ret_all_Desk_c(:,count_c)    = var_epoch_ret_all(:,2);
         
         
         controls(count_c) = subject;  
