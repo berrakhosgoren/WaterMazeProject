@@ -1,4 +1,4 @@
-function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3, var_epoch_ret_guess, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline)
+function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc, var_epoch_ret] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline)
 % it calculates the intertrial variance and ERD values of one participant 
 % and stores them in seperated matricies
 
@@ -6,12 +6,13 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     % rows: electrodes
     % columns: time points
     % 3rd dimension: encoding_all-MoBI, encoding_all-Desktop, encoding_2_3-MoBI, encoding_2_3-Desktop,
-    % retrieval_guess-MoBI, retrieval_guess-Desktop, retrieval_all-MoBI,retrieval_all-Desktop
-    % baseline-MoBI, baseline-Desktop
+    % retrieval_guess-MoBI, retrieval_guess-Desktop, retrieval_search-MoBI, retrieval_seach-Desktop,
+    % retrieval_all-MoBI,retrieval_all-Desktop, baseline-MoBI, baseline-Desktop
 
     % encoding_all includes all search trials
     % encoding_2_3 exludes the first search trial
     % retrieval_guess includes all guess trials starts
+    % retrieval_search includes 2 & 3 search trials starts
     % retrieval_all includes both guess and search trials starts (except
     % the first search trial)
     
@@ -19,27 +20,31 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     variance_allEloc = []; % all electrodes
     
     
-    enc_all_avg_MoBI   = [];
-    enc_all_avg_Desk   = [];
-    enc_2_3_avg_MoBI   = [];
-    enc_2_3_avg_Desk   = [];
-    ret_guess_avg_MoBI = [];
-    ret_guess_avg_Desk = [];
-    ret_all_avg_MoBI   = [];
-    ret_all_avg_Desk   = [];
-    baseline_avg_MoBI  = [];
-    baseline_avg_Desk  = [];
+    enc_all_avg_MoBI    = [];
+    enc_all_avg_Desk    = [];
+    enc_2_3_avg_MoBI    = [];
+    enc_2_3_avg_Desk    = [];
+    ret_guess_avg_MoBI  = [];
+    ret_guess_avg_Desk  = [];
+    ret_search_avg_MoBI = [];
+    ret_search_avg_Desk = [];
+    ret_all_avg_MoBI    = [];
+    ret_all_avg_Desk    = [];
+    baseline_avg_MoBI   = [];
+    baseline_avg_Desk   = [];
          
-    enc_all_sqr_MoBI   = [];
-    enc_all_sqr_Desk   = [];
-    enc_2_3_sqr_MoBI   = [];
-    enc_2_3_sqr_Desk   = [];
-    ret_guess_sqr_MoBI = [];
-    ret_guess_sqr_Desk = [];
-    ret_all_sqr_MoBI   = [];
-    ret_all_sqr_Desk   = [];
-    baseline_sqr_MoBI  = [];
-    baseline_sqr_Desk  = [];
+    enc_all_sqr_MoBI    = [];
+    enc_all_sqr_Desk    = [];
+    enc_2_3_sqr_MoBI    = [];
+    enc_2_3_sqr_Desk    = [];
+    ret_guess_sqr_MoBI  = [];
+    ret_guess_sqr_Desk  = [];
+    ret_search_sqr_MoBI = [];
+    ret_search_sqr_Desk = [];
+    ret_all_sqr_MoBI    = [];
+    ret_all_sqr_Desk    = [];
+    baseline_sqr_MoBI   = [];
+    baseline_sqr_Desk   = [];
         
 
     % 1. Calculate intertrial variance for all electrodes
@@ -136,7 +141,14 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         else
             ret_guess_avg_Desk = mean(epochedEEG.data(:,:,retrieval_guess_epochs), 3);     
         end      
-                
+        
+        % retrieval_search epochs:
+        if session_idx == 1
+            ret_search_avg_MoBI = mean(epochedEEG.data(:,:,retrieval_search_epochs), 3);       
+        else
+            ret_search_avg_Desk = mean(epochedEEG.data(:,:,retrieval_search_epochs), 3);     
+        end   
+        
         % retrieval_all epochs:
         if session_idx == 1
             ret_all_avg_MoBI = mean(epochedEEG.data(:,:,retrieval_all_epochs), 3);       
@@ -198,6 +210,17 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
             end   
         end
         
+        % iterate over retrieval_search epochs
+        for r = 1:12
+            for eloc = 1:128 % iterate over electrodes 
+                    if session_idx == 1
+                        ret_search_sqr_MoBI(eloc,:,r) = (epochedEEG.data(eloc,:,retrieval_search_epochs(r)) - ret_search_avg_MoBI(eloc,:)).^2;
+                    else
+                        ret_search_sqr_Desk(eloc,:,r) = (epochedEEG.data(eloc,:,retrieval_search_epochs(r)) - ret_search_avg_Desk(eloc,:)).^2;
+                    end
+            end   
+        end
+        
         % iterate over retrieval_all epochs
         for r = 1:36
             for eloc = 1:128 % iterate over electrodes 
@@ -208,6 +231,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
                     end
             end   
         end
+        
         
         % baseline epochs:
         
@@ -255,17 +279,23 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     % retrieval_guess-Desk
     variance_allEloc(:,:,6) = sum(ret_guess_sqr_Desk,3)/23;
     
+    % retrieval_search-MoBI
+    variance_allEloc(:,:,7) = sum(ret_search_sqr_MoBI,3)/11;
+        
+    % retrieval_search-Desk
+    variance_allEloc(:,:,8) = sum(ret_search_sqr_Desk,3)/11;
+    
     % retrieval_all-MoBI
-    variance_allEloc(:,:,7) = sum(ret_all_sqr_MoBI,3)/35;
+    variance_allEloc(:,:,9) = sum(ret_all_sqr_MoBI,3)/35;
         
     % retrieval_all-Desk
-    variance_allEloc(:,:,8) = sum(ret_all_sqr_Desk,3)/35;
+    variance_allEloc(:,:,10) = sum(ret_all_sqr_Desk,3)/35;
         
     % baseline-MoBI
-    variance_allEloc(:,:,9) = sum(baseline_sqr_MoBI,3)/(n_baseline_MoBI - 1);
+    variance_allEloc(:,:,11) = sum(baseline_sqr_MoBI,3)/(n_baseline_MoBI - 1);
         
     % baseline-Desktop
-    variance_allEloc(:,:,10) = sum(baseline_sqr_Desk,3)/(n_baseline_Desk - 1);
+    variance_allEloc(:,:,12) = sum(baseline_sqr_Desk,3)/(n_baseline_Desk - 1);
   
     
     
@@ -282,28 +312,34 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     %------------------------------------------------------------------
 
     % encoding_all-MoBI
-    erd_allEloc(:,:,1) = ((variance_allEloc(:,:,1) - variance_allEloc(:,:,9))./variance_allEloc(:,:,9)).*100;
+    erd_allEloc(:,:,1) = ((variance_allEloc(:,:,1) - variance_allEloc(:,:,11))./variance_allEloc(:,:,11)).*100;
         
     % encoding_all-Desk
-    erd_allEloc(:,:,2) = ((variance_allEloc(:,:,2) - variance_allEloc(:,:,10))./variance_allEloc(:,:,10)).*100;
+    erd_allEloc(:,:,2) = ((variance_allEloc(:,:,2) - variance_allEloc(:,:,12))./variance_allEloc(:,:,12)).*100;
            
     % encoding_2_3-MoBI
-    erd_allEloc(:,:,3) = ((variance_allEloc(:,:,3) - variance_allEloc(:,:,9))./variance_allEloc(:,:,9)).*100;
+    erd_allEloc(:,:,3) = ((variance_allEloc(:,:,3) - variance_allEloc(:,:,11))./variance_allEloc(:,:,11)).*100;
         
     % encoding_2_3-Desk
-    erd_allEloc(:,:,4) = ((variance_allEloc(:,:,4) - variance_allEloc(:,:,10))./variance_allEloc(:,:,10)).*100;
+    erd_allEloc(:,:,4) = ((variance_allEloc(:,:,4) - variance_allEloc(:,:,12))./variance_allEloc(:,:,12)).*100;
         
     % retrieval_guess-MoBI
-    erd_allEloc(:,:,5) = ((variance_allEloc(:,:,5) - variance_allEloc(:,:,9))./variance_allEloc(:,:,9)).*100;
+    erd_allEloc(:,:,5) = ((variance_allEloc(:,:,5) - variance_allEloc(:,:,11))./variance_allEloc(:,:,11)).*100;
         
     % retrieval_guess-Desk
-    erd_allEloc(:,:,6) = ((variance_allEloc(:,:,6) - variance_allEloc(:,:,10))./variance_allEloc(:,:,10)).*100;
+    erd_allEloc(:,:,6) = ((variance_allEloc(:,:,6) - variance_allEloc(:,:,12))./variance_allEloc(:,:,12)).*100;
+    
+    % retrieval_search-MoBI
+    erd_allEloc(:,:,7) = ((variance_allEloc(:,:,7) - variance_allEloc(:,:,11))./variance_allEloc(:,:,11)).*100;
+        
+    % retrieval_search-Desk
+    erd_allEloc(:,:,8) = ((variance_allEloc(:,:,8) - variance_allEloc(:,:,12))./variance_allEloc(:,:,12)).*100;
            
     % retrieval_all-MoBI
-    erd_allEloc(:,:,7) = ((variance_allEloc(:,:,7) - variance_allEloc(:,:,9))./variance_allEloc(:,:,9)).*100;
+    erd_allEloc(:,:,9) = ((variance_allEloc(:,:,9) - variance_allEloc(:,:,11))./variance_allEloc(:,:,11)).*100;
         
     % retrieval_all-Desk
-    erd_allEloc(:,:,8) = ((variance_allEloc(:,:,8) - variance_allEloc(:,:,10))./variance_allEloc(:,:,10)).*100;
+    erd_allEloc(:,:,10) = ((variance_allEloc(:,:,10) - variance_allEloc(:,:,12))./variance_allEloc(:,:,12)).*100;
         
     
     
@@ -331,35 +367,44 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     % var_epoch_ret:
     % 1. column = retrieval_guess-MoBI
     % 2. column = retrieval_guess-Desk
-    % 3. column = retireval_all-MoBI
-    % 4. column = retrieval_all-Desk
+    % 3. column = retireval_search-MoBI
+    % 4. column = retrieval_search-Desk
+    % 5. column = retireval_all-MoBI
+    % 6. column = retrieval_all-Desk
     
     for en = 1:18 % loop over encoding_all trials
         
-        var_epoch_enc_all(en,1) = mean(enc_all_sqr_MoBI(eloc,:,en),'all');
-        var_epoch_enc_all(en,2) = mean(enc_all_sqr_Desk(eloc,:,en),'all');
+        var_epoch_enc(en,1) = mean(enc_all_sqr_MoBI(eloc,:,en),'all');
+        var_epoch_enc(en,2) = mean(enc_all_sqr_Desk(eloc,:,en),'all');
         
     end
     
     for en = 1:12 % loop over encoding_2_3 trials
         
-        var_epoch_enc_2_3(en,1) = mean(enc_2_3_sqr_MoBI(eloc,:,en),'all');
-        var_epoch_enc_2_3(en,2) = mean(enc_2_3_sqr_Desk(eloc,:,en),'all');
+        var_epoch_enc(en,3) = mean(enc_2_3_sqr_MoBI(eloc,:,en),'all');
+        var_epoch_enc(en,4) = mean(enc_2_3_sqr_Desk(eloc,:,en),'all');
         
     end
     
     
     for re = 1:24 % loop over retrieval_guess trials
         
-        var_epoch_ret_guess(re,1) = mean(ret_guess_sqr_MoBI(eloc,:,re),'all');
-        var_epoch_ret_guess(re,2) = mean(ret_guess_sqr_Desk(eloc,:,re),'all');
+        var_epoch_ret(re,1) = mean(ret_guess_sqr_MoBI(eloc,:,re),'all');
+        var_epoch_ret(re,2) = mean(ret_guess_sqr_Desk(eloc,:,re),'all');
+        
+    end
+    
+    for re = 1:12 % loop over retrieval_search trials
+        
+        var_epoch_ret(re,3) = mean(ret_search_sqr_MoBI(eloc,:,re),'all');
+        var_epoch_ret(re,4) = mean(ret_search_sqr_Desk(eloc,:,re),'all');
         
     end
     
     for re = 1:36 % loop over retrieval_all trials
         
-        var_epoch_ret_all(re,1) = mean(ret_all_sqr_MoBI(eloc,:,re),'all');
-        var_epoch_ret_all(re,2) = mean(ret_all_sqr_Desk(eloc,:,re),'all');
+        var_epoch_ret(re,5) = mean(ret_all_sqr_MoBI(eloc,:,re),'all');
+        var_epoch_ret(re,6) = mean(ret_all_sqr_Desk(eloc,:,re),'all');
         
     end    
     
