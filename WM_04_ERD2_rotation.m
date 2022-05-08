@@ -26,85 +26,48 @@ function [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_a
         end    
               
         
-        retrieval_guess_epochs  = [];
-        retrieval_search_epochs = [];
-        ep_0_guess = [];
-        ep_90_guess = [];
-        ep_180_guess = [];
-        ep_270_guess = [];
-        ep_0_all = [];
-        ep_90_all = [];
-        ep_180_all = [];
-        ep_270_all = [];
+        retrieval_epochs  = [];
+        ep_0  = [];
+        ep_90  = [];
+        ep_180 = [];
+        ep_270 = [];
         
         % find retrieval event indicies in the sessions
         x = 1;
-        y = 1;
         
         for idx = 1:numel(epochs_trials)
             
             if contains({epochedEEG.event(epochs_trials(idx)).type}, 'guesstrial:start') == 1
-                retrieval_guess_epochs(x) = epochs_trials(idx);
+                retrieval_epochs(x) = epochs_trials(idx);
                 x = x + 1;
-            elseif contains({epochedEEG.event(epochs_trials(idx)).type}, 'searchtrial:start') == 1 && epochedEEG.event(epochs_trials(idx)).order ~= 1
-                retrieval_search_epochs(y) = epochedEEG.event(epochs_trials(idx)).epoch;
-                y = y + 1;       
             end
             
         end  
         
-        % add retrieval guess and search epoch indicies
-        retrieval_all_epochs = [retrieval_guess_epochs, retrieval_search_epochs];
         
-        % sort the epoch indicies
-        retrieval_all_epochs = sort(retrieval_all_epochs);
-        
-        
-        % find rotated and unrotated trials for retrieval_guess
+        % find rotated and unrotated trials for retrieval
         
         a = 1;
         b = 1;
         c = 1;
         d = 1;
 
-        for idx = 1:numel(retrieval_guess_epochs)  
-            if epochedEEG.event(retrieval_guess_epochs(idx)).rotation == 0
-                ep_0_guess(a) = epochedEEG.event(retrieval_guess_epochs(idx)).epoch;
+        for idx = 1:numel(retrieval_epochs)  
+            if epochedEEG.event(retrieval_epochs(idx)).rotation == 0
+                ep_0(a) = epochedEEG.event(retrieval_epochs(idx)).epoch;
                 a = a + 1; 
-            elseif epochedEEG.event(retrieval_guess_epochs(idx)).rotation == 90
-                ep_90_guess(b) = epochedEEG.event(retrieval_guess_epochs(idx)).epoch;
+            elseif epochedEEG.event(retrieval_epochs(idx)).rotation == 90
+                ep_90(b) = epochedEEG.event(retrieval_epochs(idx)).epoch;
                 b = b + 1;  
-            elseif epochedEEG.event(retrieval_guess_epochs(idx)).rotation == 180
-                ep_180_guess(c) = epochedEEG.event(retrieval_guess_epochs(idx)).epoch;
+            elseif epochedEEG.event(retrieval_epochs(idx)).rotation == 180
+                ep_180(c) = epochedEEG.event(retrieval_epochs(idx)).epoch;
                 c = c + 1;
-            elseif epochedEEG.event(retrieval_guess_epochs(idx)).rotation == 270
-                ep_270_guess(d) = epochedEEG.event(retrieval_guess_epochs(idx)).epoch; 
+            elseif epochedEEG.event(retrieval_epochs(idx)).rotation == 270
+                ep_270(d) = epochedEEG.event(retrieval_epochs(idx)).epoch; 
                 d = d + 1;  
             end    
         end
         
-        
-        % find rotated and unrotated trials for retrieval_all
-        e = 1;
-        f = 1;
-        g = 1;
-        h = 1;
-        
-        for idx = 1:numel(retrieval_all_epochs)  
-            if epochedEEG.event(retrieval_all_epochs(idx)).rotation == 0
-                ep_0_all(e) = epochedEEG.event(retrieval_all_epochs(idx)).epoch;
-                e = e + 1; 
-            elseif epochedEEG.event(retrieval_all_epochs(idx)).rotation == 90
-                ep_90_all(f) = epochedEEG.event(retrieval_all_epochs(idx)).epoch;
-                f = f + 1;  
-            elseif epochedEEG.event(retrieval_all_epochs(idx)).rotation == 180
-                ep_180_all(g) = epochedEEG.event(retrieval_all_epochs(idx)).epoch;
-                g = g + 1;
-            elseif epochedEEG.event(retrieval_all_epochs(idx)).rotation == 270
-                ep_270_all(h) = epochedEEG.event(retrieval_all_epochs(idx)).epoch; 
-                h = h + 1;  
-            end    
-        end
         
         % find baseline epoch indicies in the sessions
         baseline_epochs = [];
@@ -135,41 +98,33 @@ function [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_a
         
         % 0 rotation 
         if session_idx == 1
-            rot0_guess_avg_MoBI = mean(epochedEEG.data(:,:,ep_0_guess), 3);
-            rot0_all_avg_MoBI = mean(epochedEEG.data(:,:,ep_0_all), 3);
+            rot0_avg_MoBI = mean(epochedEEG.data(:,:,ep_0), 3);
         else
-            rot0_guess_avg_Desk = mean(epochedEEG.data(:,:,ep_0_guess), 3);   
-            rot0_all_avg_Desk = mean(epochedEEG.data(:,:,ep_0_all), 3);  
+            rot0_avg_Desk = mean(epochedEEG.data(:,:,ep_0), 3);    
         end    
 
         
         % 90 rotation 
         if session_idx == 1
-            rot90_guess_avg_MoBI = mean(epochedEEG.data(:,:,ep_90_guess), 3);
-            rot90_all_avg_MoBI = mean(epochedEEG.data(:,:,ep_90_all), 3);
+            rot90_avg_MoBI = mean(epochedEEG.data(:,:,ep_90), 3);
         else
-            rot90_guess_avg_Desk = mean(epochedEEG.data(:,:,ep_90_guess), 3);
-            rot90_all_avg_Desk = mean(epochedEEG.data(:,:,ep_90_all), 3);
+            rot90_avg_Desk = mean(epochedEEG.data(:,:,ep_90), 3);
         end    
 
         
         % 180 rotation 
         if session_idx == 1
-            rot180_guess_avg_MoBI = mean(epochedEEG.data(:,:,ep_180_guess), 3);
-            rot180_all_avg_MoBI = mean(epochedEEG.data(:,:,ep_180_all), 3);
+            rot180_avg_MoBI = mean(epochedEEG.data(:,:,ep_180), 3);
         else
-            rot180_guess_avg_Desk = mean(epochedEEG.data(:,:,ep_180_guess), 3);
-            rot180_all_avg_Desk = mean(epochedEEG.data(:,:,ep_180_all), 3);
+            rot180_avg_Desk = mean(epochedEEG.data(:,:,ep_180), 3);
         end    
         
         
         % 270 rotation 
         if session_idx == 1
-            rot270_guess_avg_MoBI = mean(epochedEEG.data(:,:,ep_270_guess), 3);
-            rot270_all_avg_MoBI = mean(epochedEEG.data(:,:,ep_270_all), 3);
+            rot270_avg_MoBI = mean(epochedEEG.data(:,:,ep_270), 3);
         else
-            rot270_guess_avg_Desk = mean(epochedEEG.data(:,:,ep_270_guess), 3);
-            rot270_all_avg_Desk = mean(epochedEEG.data(:,:,ep_270_all), 3);
+            rot270_avg_Desk = mean(epochedEEG.data(:,:,ep_270), 3);
         end    
         
         
@@ -186,116 +141,67 @@ function [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_a
         % then take their square
         
         % 0 rotation
-        for x = 1:numel(ep_0_guess) % iterate over epochs
+        for x = 1:numel(ep_0) % iterate over epochs
            for eloc = 1:128 % iterate over electrodes 
                    if session_idx == 1
-                       rot0_guess_sqr_MoBI(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0_guess(x)) - rot0_guess_avg_MoBI(eloc,:)).^2;
+                       rot0_sqr_MoBI(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0(x)) - rot0_avg_MoBI(eloc,:)).^2;
                    else
-                       rot0_guess_sqr_Desk(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0_guess(x)) - rot0_guess_avg_Desk(eloc,:)).^2;
-                   end
-           end   
-        end
-        
-        for x = 1:numel(ep_0_all) % iterate over epochs
-           for eloc = 1:128 % iterate over electrodes 
-                   if session_idx == 1
-                       rot0_all_sqr_MoBI(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0_all(x)) - rot0_all_avg_MoBI(eloc,:)).^2;
-                   else
-                       rot0_all_sqr_Desk(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0_all(x)) - rot0_all_avg_Desk(eloc,:)).^2;
+                       rot0_sqr_Desk(eloc,:,x) = (epochedEEG.data(eloc,:,ep_0(x)) - rot0_avg_Desk(eloc,:)).^2;
                    end
            end   
         end
         
         
         % 90 rotation
-        for y = 1:numel(ep_90_guess) % iterate over epochs
+        for y = 1:numel(ep_90) % iterate over epochs
            for eloc = 1:128 % iterate over electrodes 
                    if session_idx == 1
-                       rot90_guess_sqr_MoBI(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90_guess(y)) - rot90_guess_avg_MoBI(eloc,:)).^2;
+                       rot90_sqr_MoBI(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90(y)) - rot90_avg_MoBI(eloc,:)).^2;
                    else
-                       rot90_guess_sqr_Desk(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90_guess(y)) - rot90_guess_avg_Desk(eloc,:)).^2;
-                   end
-           end   
-        end
-        
-        for y = 1:numel(ep_90_all) % iterate over epochs
-           for eloc = 1:128 % iterate over electrodes 
-                   if session_idx == 1
-                       rot90_all_sqr_MoBI(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90_all(y)) - rot90_all_avg_MoBI(eloc,:)).^2;
-                   else
-                       rot90_all_sqr_Desk(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90_all(y)) - rot90_all_avg_Desk(eloc,:)).^2;
+                       rot90_sqr_Desk(eloc,:,y) = (epochedEEG.data(eloc,:,ep_90(y)) - rot90_avg_Desk(eloc,:)).^2;
                    end
            end   
         end
         
         
         % 180 rotation
-        for z = 1:numel(ep_180_guess) % iterate over epochs
+        for z = 1:numel(ep_180) % iterate over epochs
            for eloc = 1:128 % iterate over electrodes 
                    if session_idx == 1
-                       rot180_guess_sqr_MoBI(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180_guess(z)) - rot180_guess_avg_MoBI(eloc,:)).^2;
+                       rot180_sqr_MoBI(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180(z)) - rot180_avg_MoBI(eloc,:)).^2;
                    else
-                       rot180_guess_sqr_Desk(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180_guess(z)) - rot180_guess_avg_Desk(eloc,:)).^2;   
+                       rot180_sqr_Desk(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180(z)) - rot180_avg_Desk(eloc,:)).^2;   
                    end
            end   
         end
-        
-        for z = 1:numel(ep_180_all) % iterate over epochs
-           for eloc = 1:128 % iterate over electrodes 
-                   if session_idx == 1
-                       rot180_all_sqr_MoBI(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180_all(z)) - rot180_all_avg_MoBI(eloc,:)).^2;
-                   else
-                       rot180_all_sqr_Desk(eloc,:,z) = (epochedEEG.data(eloc,:,ep_180_all(z)) - rot180_all_avg_Desk(eloc,:)).^2;   
-                   end
-           end   
-        end                                               
-                                
+                   
         
         % 270 rotation
-        for q = 1:numel(ep_270_guess) % iterate over epochs
+        for q = 1:numel(ep_270) % iterate over epochs
            for eloc = 1:128 % iterate over electrodes 
                    if session_idx == 1
-                       rot270_guess_sqr_MoBI(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270_guess(q)) - rot270_guess_avg_MoBI(eloc,:)).^2;
+                       rot270_sqr_MoBI(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270(q)) - rot270_avg_MoBI(eloc,:)).^2;
                    else
-                       rot270_guess_sqr_Desk(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270_guess(q)) - rot270_guess_avg_Desk(eloc,:)).^2;
+                       rot270_sqr_Desk(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270(q)) - rot270_avg_Desk(eloc,:)).^2;
                    end
            end   
         end
         
-        for q = 1:numel(ep_270_all) % iterate over epochs
-           for eloc = 1:128 % iterate over electrodes 
-                   if session_idx == 1
-                       rot270_all_sqr_MoBI(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270_all(q)) - rot270_all_avg_MoBI(eloc,:)).^2;
-                   else
-                       rot270_all_sqr_Desk(eloc,:,q) = (epochedEEG.data(eloc,:,ep_270_all(q)) - rot270_all_avg_Desk(eloc,:)).^2;
-                   end
-           end   
-        end
-       
         
         % calculate the number of epochs in each session for later
         % calculations
         if session_idx == 1
-            n_rot0_MoBI_guess   = numel(ep_0_guess);
-            n_rot90_MoBI_guess  = numel(ep_90_guess);
-            n_rot180_MoBI_guess = numel(ep_180_guess);
-            n_rot270_MoBI_guess = numel(ep_270_guess);
-            
-            n_rot0_MoBI_all   = numel(ep_0_all);
-            n_rot90_MoBI_all  = numel(ep_90_all);
-            n_rot180_MoBI_all = numel(ep_180_all);
-            n_rot270_MoBI_all = numel(ep_270_all);
+            n_rot0_MoBI   = numel(ep_0);
+            n_rot90_MoBI  = numel(ep_90);
+            n_rot180_MoBI = numel(ep_180);
+            n_rot270_MoBI = numel(ep_270);
             
         else
-            n_rot0_Desk_guess   = numel(ep_0_guess);
-            n_rot90_Desk_guess  = numel(ep_90_guess);
-            n_rot180_Desk_guess = numel(ep_180_guess);
-            n_rot270_Desk_guess = numel(ep_270_guess);
+            n_rot0_Desk   = numel(ep_0);
+            n_rot90_Desk  = numel(ep_90);
+            n_rot180_Desk = numel(ep_180);
+            n_rot270_Desk = numel(ep_270);
             
-            n_rot0_Desk_all   = numel(ep_0_all);
-            n_rot90_Desk_all  = numel(ep_90_all);
-            n_rot180_Desk_all = numel(ep_180_all);
-            n_rot270_Desk_all = numel(ep_270_all);
         end
         
         
@@ -325,23 +231,14 @@ function [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_a
     
     
     % take the average over trials
-    rotation_var_allEloc(:,:,1) = sum(rot0_guess_sqr_MoBI,3)/(n_rot0_MoBI_guess - 1);
-    rotation_var_allEloc(:,:,2) = sum(rot0_guess_sqr_Desk,3)/(n_rot0_Desk_guess - 1);
-    rotation_var_allEloc(:,:,3) = sum(rot90_guess_sqr_MoBI,3)/(n_rot90_MoBI_guess - 1);
-    rotation_var_allEloc(:,:,4) = sum(rot90_guess_sqr_Desk,3)/(n_rot90_Desk_guess - 1);
-    rotation_var_allEloc(:,:,5) = sum(rot180_guess_sqr_MoBI,3)/(n_rot180_MoBI_guess - 1);
-    rotation_var_allEloc(:,:,6) = sum(rot180_guess_sqr_Desk,3)/(n_rot180_Desk_guess - 1);
-    rotation_var_allEloc(:,:,7) = sum(rot270_guess_sqr_MoBI,3)/(n_rot270_MoBI_guess - 1);
-    rotation_var_allEloc(:,:,8) = sum(rot270_guess_sqr_Desk,3)/(n_rot270_Desk_guess - 1);
-    
-    rotation_var_allEloc(:,:,9) = sum(rot0_all_sqr_MoBI,3)/(n_rot0_MoBI_all - 1);
-    rotation_var_allEloc(:,:,10) = sum(rot0_all_sqr_Desk,3)/(n_rot0_Desk_all - 1);
-    rotation_var_allEloc(:,:,11) = sum(rot90_all_sqr_MoBI,3)/(n_rot90_MoBI_all - 1);
-    rotation_var_allEloc(:,:,12) = sum(rot90_all_sqr_Desk,3)/(n_rot90_Desk_all - 1);
-    rotation_var_allEloc(:,:,13) = sum(rot180_all_sqr_MoBI,3)/(n_rot180_MoBI_all - 1);
-    rotation_var_allEloc(:,:,14) = sum(rot180_all_sqr_Desk,3)/(n_rot180_Desk_all - 1);
-    rotation_var_allEloc(:,:,15) = sum(rot270_all_sqr_MoBI,3)/(n_rot270_MoBI_all - 1);
-    rotation_var_allEloc(:,:,16) = sum(rot270_all_sqr_Desk,3)/(n_rot270_Desk_all - 1);
+    rotation_var_allEloc(:,:,1) = sum(rot0_sqr_MoBI,3)/(n_rot0_MoBI - 1);
+    rotation_var_allEloc(:,:,2) = sum(rot0_sqr_Desk,3)/(n_rot0_Desk - 1);
+    rotation_var_allEloc(:,:,3) = sum(rot90_sqr_MoBI,3)/(n_rot90_MoBI - 1);
+    rotation_var_allEloc(:,:,4) = sum(rot90_sqr_Desk,3)/(n_rot90_Desk - 1);
+    rotation_var_allEloc(:,:,5) = sum(rot180_sqr_MoBI,3)/(n_rot180_MoBI - 1);
+    rotation_var_allEloc(:,:,6) = sum(rot180_sqr_Desk,3)/(n_rot180_Desk - 1);
+    rotation_var_allEloc(:,:,7) = sum(rot270_sqr_MoBI,3)/(n_rot270_MoBI - 1);
+    rotation_var_allEloc(:,:,8) = sum(rot270_sqr_Desk,3)/(n_rot270_Desk - 1);
     
     
     % baseline-MoBI
@@ -373,14 +270,6 @@ function [rotation_var_fm, rotation_var_allEloc, rotation_erd_fm, rotation_erd_a
     rotation_erd_allEloc(:,:,6)  = (rotation_var_allEloc(:,:,6) - baseline_desk)./baseline_desk.*100;
     rotation_erd_allEloc(:,:,7)  = (rotation_var_allEloc(:,:,7) - baseline_mobi)./baseline_mobi.*100;
     rotation_erd_allEloc(:,:,8)  = (rotation_var_allEloc(:,:,8) - baseline_desk)./baseline_desk.*100;
-    rotation_erd_allEloc(:,:,9)  = (rotation_var_allEloc(:,:,9) - baseline_mobi)./baseline_mobi.*100;
-    rotation_erd_allEloc(:,:,10) = (rotation_var_allEloc(:,:,10) - baseline_desk)./baseline_desk.*100;
-    rotation_erd_allEloc(:,:,11) = (rotation_var_allEloc(:,:,11) - baseline_mobi)./baseline_mobi.*100;
-    rotation_erd_allEloc(:,:,12) = (rotation_var_allEloc(:,:,12) - baseline_desk)./baseline_desk.*100;
-    rotation_erd_allEloc(:,:,13) = (rotation_var_allEloc(:,:,13) - baseline_mobi)./baseline_mobi.*100;
-    rotation_erd_allEloc(:,:,14) = (rotation_var_allEloc(:,:,14) - baseline_desk)./baseline_desk.*100;
-    rotation_erd_allEloc(:,:,15) = (rotation_var_allEloc(:,:,15) - baseline_mobi)./baseline_mobi.*100;
-    rotation_erd_allEloc(:,:,16) = (rotation_var_allEloc(:,:,16) - baseline_desk)./baseline_desk.*100;
     
     
     % Calculate ERD/ERS for only interested electrodes
