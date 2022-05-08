@@ -448,16 +448,16 @@ title('Controls-Desktop','fontweight','bold','fontsize',18)
 saveas(f5,fullfile(path,'Regression5'),'png');
 
 
-% 6. Distance Error - Frontal Midline Theta (Retrieval(all) Regression
+% 6. Distance Error - Frontal Midline Theta (Retrieval(search) Regression
 %---------------------------------------------------------
 
 
 % seperate them as mobi and desktop
-theta2_p_m_all = meanEloc_fm_pat(:,7);
-theta2_p_d_all = meanEloc_fm_pat(:,8);
+theta2_p_m_guess = meanEloc_fm_pat(:,7);
+theta2_p_d_guess = meanEloc_fm_pat(:,8);
 
-theta2_c_m_all = meanEloc_fm_cont(:,7);
-theta2_c_d_all = meanEloc_fm_cont(:,8);
+theta2_c_m_guess = meanEloc_fm_cont(:,7);
+theta2_c_d_guess = meanEloc_fm_cont(:,8);
 
 
 
@@ -481,10 +481,10 @@ set(gcf, 'Position', get(0, 'Screensize'));
 % 1. Patient-MoBI
 
 subplot(2,2,1)
-regression21 = table(theta2_p_m_all, meanDistance_error_p_m');
+regression21 = table(theta2_p_m_guess, meanDistance_error_p_m');
 mdl21 = fitlm(regression21,'RobustOpts','on');
 plot(mdl21)
-xlabel('Retrieval(all) - Theta Power')
+xlabel('Retrieval(search) - Theta Power')
 ylabel('Distance Error')
 title('Patients-MoBI','fontweight','bold','fontsize',18)
 
@@ -492,10 +492,10 @@ title('Patients-MoBI','fontweight','bold','fontsize',18)
 % 2. Patient-Desktop
 
 subplot(2,2,2)
-regression22 = table(theta2_p_d_all, meanDistance_error_p_d');
+regression22 = table(theta2_p_d_guess, meanDistance_error_p_d');
 mdl22 = fitlm(regression22,'RobustOpts','on');
 plot(mdl22)
-xlabel('Retrieval(all) - Theta Power')
+xlabel('Retrieval(search) - Theta Power')
 ylabel('Distance Error')
 title('Patients-Desktop','fontweight','bold','fontsize',18)
 
@@ -503,10 +503,10 @@ title('Patients-Desktop','fontweight','bold','fontsize',18)
 % 3. Control-MoBI
 
 subplot(2,2,3)
-regression23 = table(theta2_c_m_all, meanDistance_error_c_m');
+regression23 = table(theta2_c_m_guess, meanDistance_error_c_m');
 mdl23 = fitlm(regression23,'RobustOpts','on');
 plot(mdl23)
-xlabel('Retrieval(all) - Theta Power')
+xlabel('Retrieval(search) - Theta Power')
 ylabel('Distance Error')
 title('Controls-MoBI','fontweight','bold','fontsize',18)
 
@@ -514,10 +514,10 @@ title('Controls-MoBI','fontweight','bold','fontsize',18)
 % 4. Control-Desktop
 
 subplot(2,2,4)
-regression24 = table(theta2_c_d_all, meanDistance_error_c_d');
+regression24 = table(theta2_c_d_guess, meanDistance_error_c_d');
 mdl24 = fitlm(regression24,'RobustOpts','on');
 plot(mdl24)
-xlabel('Retrieval(all) - Theta Power')
+xlabel('Retrieval(search) - Theta Power')
 ylabel('Distance Error')
 title('Controls-Desktop','fontweight','bold','fontsize',18)
 
@@ -528,7 +528,88 @@ title('Controls-Desktop','fontweight','bold','fontsize',18)
 saveas(f6,fullfile(path,'Regression6'),'png');
 
 
-% 7. Generate regression graphs per person (Search - Encoding(2&3)) 
+
+% 7. Distance Error - Frontal Midline Theta (Retrieval(all) Regression
+%---------------------------------------------------------
+
+
+% seperate them as mobi and desktop
+theta2_p_m_all = meanEloc_fm_pat(:,9);
+theta2_p_d_all = meanEloc_fm_pat(:,10);
+
+theta2_c_m_all = meanEloc_fm_cont(:,9);
+theta2_c_d_all = meanEloc_fm_cont(:,10);
+
+
+
+% generate regression graph for all participants
+%-----------------------------------------------
+
+% take the mean value of each participant
+
+meanDistance_error_p_m = mean(distance_error_p_m, 1);
+meanDistance_error_p_d = mean(distance_error_p_d, 1);
+
+meanDistance_error_c_m = mean(distance_error_c_m, 1);
+meanDistance_error_c_d = mean(distance_error_c_d, 1);
+
+
+% generate the plots 
+
+f7 = figure(7);
+set(gcf, 'Position', get(0, 'Screensize'));
+
+% 1. Patient-MoBI
+
+subplot(2,2,1)
+regression25 = table(theta2_p_m_all, meanDistance_error_p_m');
+mdl25 = fitlm(regression25,'RobustOpts','on');
+plot(mdl25)
+xlabel('Retrieval(all) - Theta Power')
+ylabel('Distance Error')
+title('Patients-MoBI','fontweight','bold','fontsize',18)
+
+
+% 2. Patient-Desktop
+
+subplot(2,2,2)
+regression26 = table(theta2_p_d_all, meanDistance_error_p_d');
+mdl26 = fitlm(regression26,'RobustOpts','on');
+plot(mdl26)
+xlabel('Retrieval(all) - Theta Power')
+ylabel('Distance Error')
+title('Patients-Desktop','fontweight','bold','fontsize',18)
+
+
+% 3. Control-MoBI
+
+subplot(2,2,3)
+regression27 = table(theta2_c_m_all, meanDistance_error_c_m');
+mdl27 = fitlm(regression27,'RobustOpts','on');
+plot(mdl27)
+xlabel('Retrieval(all) - Theta Power')
+ylabel('Distance Error')
+title('Controls-MoBI','fontweight','bold','fontsize',18)
+
+
+% 4. Control-Desktop
+
+subplot(2,2,4)
+regression28 = table(theta2_c_d_all, meanDistance_error_c_d');
+mdl28 = fitlm(regression28,'RobustOpts','on');
+plot(mdl28)
+xlabel('Retrieval(all) - Theta Power')
+ylabel('Distance Error')
+title('Controls-Desktop','fontweight','bold','fontsize',18)
+
+
+% save the figure
+%----------------------------
+
+saveas(f7,fullfile(path,'Regression7'),'png');
+
+
+% 8. Generate regression graphs per person (Search - Encoding(2&3)) 
 %-----------------------------------------------------------------
 
 % load the data
@@ -546,15 +627,15 @@ for pi = 1:10
 
     % 1. Patient-MoBI
 
-    regression25 = table(varEpoch_enc_2_3_Mobi_p(:,pi), duration_p_m_2_3(:,pi));
-    mdl25 = fitlm(regression25,'RobustOpts','on');
+    regression29 = table(varEpoch_enc_2_3_Mobi_p(:,pi), duration_p_m_2_3(:,pi));
+    mdl29 = fitlm(regression29,'RobustOpts','on');
     
-    f7 = figure(7);
+    f8 = figure(8);
     set(gcf,'Name','Patients-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
 
     subplot(3,4,pi)
-    plot(mdl25)
+    plot(mdl29)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
     title(num2str(patients(pi)))
@@ -565,15 +646,15 @@ for pi = 1:10
     
     % 2. Patient-Desktop
 
-    regression26 = table(varEpoch_enc_2_3_Desk_p(:,pi), duration_p_d_2_3(:,pi));
-    mdl26 = fitlm(regression26,'RobustOpts','on');
+    regression30 = table(varEpoch_enc_2_3_Desk_p(:,pi), duration_p_d_2_3(:,pi));
+    mdl30 = fitlm(regression30,'RobustOpts','on');
     
-    f8 = figure(8);
+    f9 = figure(9);
     set(gcf,'Name','Patients-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
     subplot(3,4,pi)
-    plot(mdl26)
+    plot(mdl30)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
     title(num2str(patients(pi)))
@@ -589,15 +670,15 @@ for ci = 1:18
 
     % 3. Control-MoBI
 
-    regression27 = table(varEpoch_enc_2_3_Mobi_c(:,ci), duration_c_m_2_3(:,ci));
-    mdl27 = fitlm(regression27,'RobustOpts','on');
+    regression31 = table(varEpoch_enc_2_3_Mobi_c(:,ci), duration_c_m_2_3(:,ci));
+    mdl31 = fitlm(regression31,'RobustOpts','on');
     
-    f9 = figure(9);
+    f10 = figure(10);
     set(gcf,'Name','Controls-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
     
     subplot(4,5,ci)
-    plot(mdl27)
+    plot(mdl31)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
     title(num2str(controls(ci)))
@@ -607,15 +688,15 @@ for ci = 1:18
 
     % 4. Control-Desktop
 
-    regression28 = table(varEpoch_enc_2_3_Desk_c(:,ci), duration_c_d_2_3(:,ci));
-    mdl28 = fitlm(regression28,'RobustOpts','on');
+    regression32 = table(varEpoch_enc_2_3_Desk_c(:,ci), duration_c_d_2_3(:,ci));
+    mdl32 = fitlm(regression32,'RobustOpts','on');
     
-    f10 = figure(10);
+    f11 = figure(11);
     set(gcf,'Name','Controls-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
     subplot(4,5,ci)
-    plot(mdl28)
+    plot(mdl32)
     xlabel('Encoding - Theta Power')
     ylabel('Search Duration')
     title(num2str(controls(ci)))
@@ -628,10 +709,10 @@ end
 % save the figures
 %----------------------------
 
-saveas(f7,fullfile(path,'Regression7'),'png');
 saveas(f8,fullfile(path,'Regression8'),'png');
 saveas(f9,fullfile(path,'Regression9'),'png');
 saveas(f10,fullfile(path,'Regression10'),'png');
+saveas(f11,fullfile(path,'Regression11'),'png');
 
 
 % 8. Generate regression graphs per person (Distance - Retrieval(guess))
@@ -653,7 +734,7 @@ for pi = 1:10
     regression29 = table(varEpoch_ret_guess_Mobi_p(:,pi), distance_error_p_m(:,pi));
     mdl29 = fitlm(regression29,'RobustOpts','on');
     
-    f11 = figure(11);
+    f12 = figure(12);
     set(gcf,'Name','Patients-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
 
@@ -672,7 +753,7 @@ for pi = 1:10
     regression30 = table(varEpoch_ret_guess_Desk_p(:,pi), distance_error_p_d(:,pi));
     mdl30 = fitlm(regression30,'RobustOpts','on');
     
-    f12 = figure(12);
+    f13 = figure(13);
     set(gcf,'Name','Patients-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
@@ -696,7 +777,7 @@ for ci = 1:18
     regression31 = table(varEpoch_ret_guess_Mobi_c(:,ci), distance_error_c_m(:,ci));
     mdl31 = fitlm(regression31,'RobustOpts','on');
     
-    f13 = figure(13);
+    f14 = figure(14);
     set(gcf,'Name','Controls-MoBI')
     set(gcf, 'Position', get(0, 'Screensize'));
     
@@ -714,7 +795,7 @@ for ci = 1:18
     regression32 = table(varEpoch_ret_guess_Desk_c(:,ci), distance_error_c_d(:,ci));
     mdl32 = fitlm(regression32,'RobustOpts','on');
     
-    f14 = figure(14);
+    f15 = figure(15);
     set(gcf,'Name','Controls-Desktop')
     set(gcf, 'Position', get(0, 'Screensize'));
     
@@ -732,10 +813,10 @@ end
 % save the figures
 %----------------------------
 
-saveas(f11,fullfile(path,'Regression11'),'png');
 saveas(f12,fullfile(path,'Regression12'),'png');
 saveas(f13,fullfile(path,'Regression13'),'png');
 saveas(f14,fullfile(path,'Regression14'),'png');
+saveas(f15,fullfile(path,'Regression15'),'png');
 
 %
 
