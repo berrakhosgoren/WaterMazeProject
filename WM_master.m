@@ -154,8 +154,8 @@ for Pi = 1:numel(participantsPreproc)
     
     if ~exist(fullfile(participantFolder, epochedFileNameEEG), 'file') && ~exist(fullfile(participantFolder, epochedBaselineFileNameEEG), 'file')
         
-        preprocessedEEG =  pop_loadset('filepath', participantFolder ,'filename', bandpassedFileNameEEG);        
-        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(preprocessedEEG);       
+        bandpassedEEG =  pop_loadset('filepath', participantFolder ,'filename', bandpassedFileNameEEG);        
+        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG);       
         pop_saveset(epochedEEG, 'filepath', participantFolder ,'filename', epochedFileNameEEG)
         pop_saveset(epochedEEG_baseline, 'filepath', participantFolder ,'filename', epochedBaselineFileNameEEG)
         
@@ -166,34 +166,6 @@ for Pi = 1:numel(participantsPreproc)
       
 end    
 
-
-
-%% ---ERSP--- 
-
-% pass this step for ERD/ERS calculations
-
-for Pi = 1:numel(participantsPreproc)
-    
-    subject = participantsPreproc(Pi);
-    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
-    input_filename = [num2str(subject') '_epoched_withoutbandpass.set'];
-    channels_to_use_for_study = 1:128;
-    output_foldername = '';
-    timewarp_latency_loadpath = NaN;
-    epochs_info_filename_input = NaN;
-    epochs_info_filename_output = NaN;
-    recompute = true;
-    has_timewarp_latencies = false;
-    dont_warp_but_cut = false;
-    n_freqs = 10;
-    n_times = 250;
-
-
-    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
-      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
-      0,dont_warp_but_cut, n_freqs, n_times )
-
-end
 
 %% STEP 04.1: ERD Calculation / Main 
 % create theta matricies and tables that includes all participants
@@ -1730,4 +1702,90 @@ save(fullfile(table_path,'distance_error_controls.mat'), 'distance_error_control
 %% STEP 07: Statistical Analysis
 
 % WM_07_analysis
+
+
+%% STEP 08: ERSP Calculation
+
+% Optional!
+
+
+% seperate the data as mobi and desktop
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject                  = participantsPreproc(Pi);
+    participantFolder        = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedFileNameEEG       = [num2str(subject') '_epoched_withoutbandpass.set'];
+    epochedMobiFileNameEEG   = [num2str(subject') '_epoched_mobi.set'];
+    epochedDeskFileNameEEG   = [num2str(subject') '_epoched_desk.set'];
+ 
+    
+    if ~exist(fullfile(participantFolder, epochedMobiFileNameEEG), 'file') && ~exist(fullfile(participantFolder, epochedDeskFileNameEEG), 'file')
+        
+        epochedEEG       =  pop_loadset('filepath', participantFolder ,'filename', epochedFileNameEEG);        
+        [epochedMobiEEG] = pop_selectevent(epochedEEG, 'session', 1); 
+        [epochedDeskEEG] = pop_selectevent(epochedEEG, 'session', 2); 
+        pop_saveset(epochedMobiEEG, 'filepath', participantFolder ,'filename', epochedMobiFileNameEEG)
+        pop_saveset(epochedDeskEEG, 'filepath', participantFolder ,'filename', epochedDeskFileNameEEG)
+        
+    else
+        epochedMobiEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedMobiFileNameEEG);
+        epochedDeskEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedDeskFileNameEEG);
+    end
+    
+    
+end
+
+% first calculate ERSP values for mobi
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject = participantsPreproc(Pi);
+    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
+    input_filename = [num2str(subject') '_epoched_mobi.set'];
+    channels_to_use_for_study = 1:128;
+    output_foldername = '';
+    timewarp_latency_loadpath = NaN;
+    epochs_info_filename_input = NaN;
+    epochs_info_filename_output = NaN;
+    recompute = true;
+    has_timewarp_latencies = false;
+    dont_warp_but_cut = false;
+    n_freqs = 10;
+    n_times = 250;
+
+
+    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
+      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
+      0,dont_warp_but_cut, n_freqs, n_times )
+
+end
+
+
+%%
+
+% calculate ERSP values for desktop
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject = participantsPreproc(Pi);
+    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
+    input_filename = [num2str(subject') '_epoched_desk.set'];
+    channels_to_use_for_study = 1:128;
+    output_foldername = '';
+    timewarp_latency_loadpath = NaN;
+    epochs_info_filename_input = NaN;
+    epochs_info_filename_output = NaN;
+    recompute = true;
+    has_timewarp_latencies = false;
+    dont_warp_but_cut = false;
+    n_freqs = 10;
+    n_times = 250;
+
+
+    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
+      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
+      0,dont_warp_but_cut, n_freqs, n_times )
+
+end
 
