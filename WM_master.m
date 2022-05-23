@@ -13,7 +13,7 @@ end
 
 
 % participant IDs for each loop 
-participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82011 83001:83003, 83006:83011];
+participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82010, 82011 83001:83003, 83006:83011];
 
 % configuration
 WM_config; 
@@ -1704,12 +1704,10 @@ save(fullfile(table_path,'distance_error_controls.mat'), 'distance_error_control
 % WM_07_analysis
 
 
-%% STEP 08: ERSP Calculation
-
-% Optional!
+%% STEP 08.1: ERSP Calculation - Separate data
 
 
-% seperate the data as mobi and desktop
+% separate the data as mobi and desktop
 
 for Pi = 1:numel(participantsPreproc)
     
@@ -1736,56 +1734,1004 @@ for Pi = 1:numel(participantsPreproc)
     
 end
 
-% first calculate ERSP values for mobi
+%% STEP 08.2: ERSP Calculation for patients
+
+
+% seperate patient and control participants
+
+patients = [];
+controls = [];
+count_p = 1; % patients count
+count_c = 1; % controls count
 
 for Pi = 1:numel(participantsPreproc)
     
     subject = participantsPreproc(Pi);
-    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
-    input_filename = [num2str(subject') '_epoched_mobi.set'];
-    channels_to_use_for_study = 1:128;
-    output_foldername = '';
-    timewarp_latency_loadpath = NaN;
-    epochs_info_filename_input = NaN;
-    epochs_info_filename_output = NaN;
-    recompute = true;
-    has_timewarp_latencies = false;
-    dont_warp_but_cut = false;
-    n_freqs = 10;
-    n_times = 250;
+    
+    if contains(num2str(subject), '81') == 1
+        patients(count_p) = subject;
+        count_p = count_p + 1;
+    else 
+        controls(count_c) = subject;
+        count_c = count_c + 1;
+    
+    end    
+end
 
 
-    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
-      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
-      0,dont_warp_but_cut, n_freqs, n_times )
+% loop over patients
+for Pi = 1:numel(patients)
+    
+    
+    subject                  = patients(Pi);
+    participantFolder        = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedMobiFileNameEEG   = [num2str(subject') '_epoched_mobi.set'];
+    epochedDeskFileNameEEG   = [num2str(subject') '_epoched_desk.set'];
+    
+    epochedMobiEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedMobiFileNameEEG);
+    epochedDeskEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedDeskFileNameEEG);
+    
+    
+    % separate the data according to trials
+    [EncMobiEEG]       = pop_selectevent(epochedMobiEEG, 'type', 'searchtrial:found');  
+    [RetSearchMobiEEG] = pop_selectevent(epochedMobiEEG, 'type', 'searchtrial:start', 'order', [2,3]);
+    [RetGuessMobiEEG]  = pop_selectevent(epochedMobiEEG,'omittype',[{'searchtrial:start'},{'searchtrial:found'}]);
+    [EncDeskEEG]       = pop_selectevent(epochedDeskEEG, 'type', 'searchtrial:found');  
+    [RetSearchDeskEEG] = pop_selectevent(epochedDeskEEG, 'type', 'searchtrial:start', 'order', [2,3]);
+    [RetGuessDeskEEG]  = pop_selectevent(epochedDeskEEG,'omittype',[{'searchtrial:start'},{'searchtrial:found'}]);
+    
+    
+    % Compute a time-frequency decomposition for every electrode
+    
+    % MoBI
+    %---------------------------------------------------------------------
+      
+    % Encoding
+    for elec = 1:EncMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(EncMobiEEG,...
+        1, elec, [EncMobiEEG.xmin EncMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) EncMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) EncMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) EncMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) EncMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) EncMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) EncMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) EncMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patEnc_mobi_ersp(:,:,:,Pi) = allersp;
+    patEnc_mobi_times(:,:,:,Pi) = alltimes;
+    patEnc_mobi_freqs(:,:,:,Pi) = allfreqs;
+    patEnc_mobi_boot(:,:,:,Pi) = allerspboot;
 
+    
+    % Retrieval (guess)
+    for elec = 1:RetGuessMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetGuessMobiEEG,...
+        1, elec, [RetGuessMobiEEG.xmin RetGuessMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetGuessMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) RetGuessMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetGuessMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) RetGuessMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetGuessMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetGuessMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetGuessMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patRet_guess_mobi_ersp(:,:,:,Pi) = allersp;
+    patRet_guess_mobi_times(:,:,:,Pi) = alltimes;
+    patRet_guess_mobi_freqs(:,:,:,Pi) = allfreqs;
+    patRet_guess_mobi_boot(:,:,:,Pi) = allerspboot;
+    
+    
+    % Retrieval (search)
+    for elec = 1:RetSearchMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetSearchMobiEEG,...
+        1, elec, [RetSearchMobiEEG.xmin RetSearchMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetSearchMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) RetSearchMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetSearchMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) RetSearchMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetSearchMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetSearchMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetSearchMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patRet_search_mobi_ersp(:,:,:,Pi) = allersp;
+    patRet_search_mobi_times(:,:,:,Pi) = alltimes;
+    patRet_search_mobi_freqs(:,:,:,Pi) = allfreqs;
+    patRet_search_mobi_boot(:,:,:,Pi) = allerspboot;
+
+    
+    % Desktop
+    %----------------------------------------------------------------------
+    
+    % Encoding
+    for elec = 1:EncDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(EncDeskEEG,...
+        1, elec, [EncDeskEEG.xmin EncDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) EncDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) EncDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) EncDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) EncDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) EncDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) EncDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) EncDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patEnc_desk_ersp(:,:,:,Pi) = allersp;
+    patEnc_desk_times(:,:,:,Pi) = alltimes;
+    patEnc_desk_freqs(:,:,:,Pi) = allfreqs;
+    patEnc_desk_boot(:,:,:,Pi) = allerspboot;
+
+    
+    % Retrieval (guess)
+    for elec = 1:RetGuessDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetGuessDeskEEG,...
+        1, elec, [RetGuessDeskEEG.xmin RetGuessDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetGuessDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) RetGuessDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetGuessDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) RetGuessDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetGuessDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetGuessDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetGuessDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patRet_guess_desk_ersp(:,:,:,Pi) = allersp;
+    patRet_guess_desk_times(:,:,:,Pi) = alltimes;
+    patRet_guess_desk_freqs(:,:,:,Pi) = allfreqs;
+    patRet_guess_desk_boot(:,:,:,Pi) = allerspboot;
+
+    
+    % Retrieval (search)
+    for elec = 1:RetSearchDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetSearchDeskEEG,...
+        1, elec, [RetSearchDeskEEG.xmin RetSearchDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetSearchDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) RetSearchDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetSearchDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) RetSearchDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetSearchDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetSearchDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetSearchDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    patRet_search_desk_ersp(:,:,:,Pi) = allersp;
+    patRet_search_desk_times(:,:,:,Pi) = alltimes;
+    patRet_search_desk_freqs(:,:,:,Pi) = allfreqs;
+    patRet_search_desk_boot(:,:,:,Pi) = allerspboot;
+
+    
+end
+
+
+% save the patient matricies
+
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERSP';
+
+save(fullfile(table_path,'patEnc_mobi_ersp.mat'),'patEnc_mobi_ersp');
+save(fullfile(table_path,'patEnc_mobi_times.mat'),'patEnc_mobi_times');
+save(fullfile(table_path,'patEnc_mobi_freqs.mat'),'patEnc_mobi_freqs');
+save(fullfile(table_path,'patEnc_mobi_boot.mat'),'patEnc_mobi_boot');
+
+save(fullfile(table_path,'patRet_guess_mobi_ersp.mat'),'patRet_guess_mobi_ersp');
+save(fullfile(table_path,'patRet_guess_mobi_times.mat'),'patRet_guess_mobi_times');
+save(fullfile(table_path,'patRet_guess_mobi_freqs.mat'),'patRet_guess_mobi_freqs');
+save(fullfile(table_path,'patRet_guess_mobi_boot.mat'),'patRet_guess_mobi_boot');
+
+save(fullfile(table_path,'patRet_search_mobi_ersp.mat'),'patRet_search_mobi_ersp');
+save(fullfile(table_path,'patRet_search_mobi_times.mat'),'patRet_search_mobi_times');
+save(fullfile(table_path,'patRet_search_mobi_freqs.mat'),'patRet_search_mobi_freqs');
+save(fullfile(table_path,'patRet_search_mobi_boot.mat'),'patRet_search_mobi_boot');
+
+save(fullfile(table_path,'patEnc_desk_ersp.mat'),'patEnc_desk_ersp');
+save(fullfile(table_path,'patEnc_desk_times.mat'),'patEnc_desk_times');
+save(fullfile(table_path,'patEnc_desk_freqs.mat'),'patEnc_desk_freqs');
+save(fullfile(table_path,'patEnc_desk_boot.mat'),'patEnc_desk_boot');
+
+save(fullfile(table_path,'patRet_guess_desk_ersp.mat'),'patRet_guess_desk_ersp');
+save(fullfile(table_path,'patRet_guess_desk_times.mat'),'patRet_guess_desk_times');
+save(fullfile(table_path,'patRet_guess_desk_freqs.mat'),'patRet_guess_desk_freqs');
+save(fullfile(table_path,'patRet_guess_desk_boot.mat'),'patRet_guess_desk_boot');
+
+save(fullfile(table_path,'patRet_search_desk_ersp.mat'),'patRet_search_desk_ersp');
+save(fullfile(table_path,'patRet_search_desk_times.mat'),'patRet_search_desk_times');
+save(fullfile(table_path,'patRet_search_desk_freqs.mat'),'patRet_search_desk_freqs');
+save(fullfile(table_path,'patRet_search_desk_boot.mat'),'patRet_search_desk_boot');
+
+
+%% STEP 08.3: ERSP Calculation for controls
+
+
+% seperate patient and control participants
+
+patients = [];
+controls = [];
+count_p = 1; % patients count
+count_c = 1; % controls count
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject = participantsPreproc(Pi);
+    
+    if contains(num2str(subject), '81') == 1
+        patients(count_p) = subject;
+        count_p = count_p + 1;
+    else 
+        controls(count_c) = subject;
+        count_c = count_c + 1;
+    
+    end    
+end
+
+
+% loop over controls
+for Ci = 1:numel(controls)
+    
+    
+    subject                  = controls(Ci);
+    participantFolder        = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedMobiFileNameEEG   = [num2str(subject') '_epoched_mobi.set'];
+    epochedDeskFileNameEEG   = [num2str(subject') '_epoched_desk.set'];
+    
+    epochedMobiEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedMobiFileNameEEG);
+    epochedDeskEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedDeskFileNameEEG);
+    
+    
+    % separate the data according to trials
+    [EncMobiEEG]       = pop_selectevent(epochedMobiEEG, 'type', 'searchtrial:found');  
+    [RetSearchMobiEEG] = pop_selectevent(epochedMobiEEG, 'type', 'searchtrial:start', 'order', [2,3]);
+    [RetGuessMobiEEG]  = pop_selectevent(epochedMobiEEG,'omittype',[{'searchtrial:start'},{'searchtrial:found'}]);
+    [EncDeskEEG]       = pop_selectevent(epochedDeskEEG, 'type', 'searchtrial:found');  
+    [RetSearchDeskEEG] = pop_selectevent(epochedDeskEEG, 'type', 'searchtrial:start', 'order', [2,3]);
+    [RetGuessDeskEEG]  = pop_selectevent(epochedDeskEEG,'omittype',[{'searchtrial:start'},{'searchtrial:found'}]);
+    
+    
+    % Compute a time-frequency decomposition for every electrode
+    
+    % MoBI
+    %---------------------------------------------------------------------  
+    
+    % Encoding
+    for elec = 1:EncMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(EncMobiEEG,...
+        1, elec, [EncMobiEEG.xmin EncMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) EncMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) EncMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) EncMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) EncMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) EncMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) EncMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) EncMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contEnc_mobi_ersp(:,:,:,Ci) = allersp;
+    contEnc_mobi_times(:,:,:,Ci) = alltimes;
+    contEnc_mobi_freqs(:,:,:,Ci) = allfreqs;
+    contEnc_mobi_boot(:,:,:,Ci) = allerspboot;
+    
+    
+    % Retrieval (guess)
+    for elec = 1:RetGuessMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetGuessMobiEEG,...
+        1, elec, [RetGuessMobiEEG.xmin RetGuessMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetGuessMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) RetGuessMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetGuessMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) RetGuessMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetGuessMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetGuessMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetGuessMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contRet_guess_mobi_ersp(:,:,:,Ci) = allersp;
+    contRet_guess_mobi_times(:,:,:,Ci) = alltimes;
+    contRet_guess_mobi_freqs(:,:,:,Ci) = allfreqs;
+    contRet_guess_mobi_boot(:,:,:,Ci) = allerspboot;
+
+    
+    % Retrieval (search)
+    for elec = 1:RetSearchMobiEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetSearchMobiEEG,...
+        1, elec, [RetSearchMobiEEG.xmin RetSearchMobiEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetSearchMobiEEG.nbchan]);
+            allitc = zeros([ size(itc) RetSearchMobiEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetSearchMobiEEG.nbchan]);
+            alltimes = zeros([ size(times) RetSearchMobiEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetSearchMobiEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetSearchMobiEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetSearchMobiEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contRet_search_mobi_ersp(:,:,:,Ci) = allersp;
+    contRet_search_mobi_times(:,:,:,Ci) = alltimes;
+    contRet_search_mobi_freqs(:,:,:,Ci) = allfreqs;
+    contRet_search_mobi_boot(:,:,:,Ci) = allerspboot;
+
+    
+    % Desktop
+    %----------------------------------------------------------------------
+    
+    % Encoding
+    for elec = 1:EncDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(EncDeskEEG,...
+        1, elec, [EncDeskEEG.xmin EncDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) EncDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) EncDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) EncDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) EncDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) EncDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) EncDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) EncDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contEnc_desk_ersp(:,:,:,Ci) = allersp;
+    contEnc_desk_times(:,:,:,Ci) = alltimes;
+    contEnc_desk_freqs(:,:,:,Ci) = allfreqs;
+    contEnc_desk_boot(:,:,:,Ci) = allerspboot;
+
+    
+    % Retrieval (guess)
+    for elec = 1:RetGuessDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetGuessDeskEEG,...
+        1, elec, [RetGuessDeskEEG.xmin RetGuessDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetGuessDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) RetGuessDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetGuessDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) RetGuessDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetGuessDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetGuessDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetGuessDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contRet_guess_desk_ersp(:,:,:,Ci) = allersp;
+    contRet_guess_desk_times(:,:,:,Ci) = alltimes;
+    contRet_guess_desk_freqs(:,:,:,Ci) = allfreqs;
+    contRet_guess_desk_boot(:,:,:,Ci) = allerspboot;
+
+    
+    % Retrieval (search)
+    for elec = 1:RetSearchDeskEEG.nbchan
+        [ersp,itc,powbase,times,freqs,erspboot,itcboot] = pop_newtimef(RetSearchDeskEEG,...
+        1, elec, [RetSearchDeskEEG.xmin RetSearchDeskEEG.xmax]*1000, [3 0.5], 'maxfreq', 70, 'padratio', 16, ...
+        'plotphase', 'off', 'timesout', 60, 'alpha', .05, 'plotersp','off', 'plotitc','off');
+        if elec == 1  % create empty arrays if first electrode
+            allersp = zeros([ size(ersp) RetSearchDeskEEG.nbchan]);
+            allitc = zeros([ size(itc) RetSearchDeskEEG.nbchan]);
+            allpowbase = zeros([ size(powbase) RetSearchDeskEEG.nbchan]);
+            alltimes = zeros([ size(times) RetSearchDeskEEG.nbchan]);
+            allfreqs = zeros([ size(freqs) RetSearchDeskEEG.nbchan]);
+            allerspboot = zeros([ size(erspboot) RetSearchDeskEEG.nbchan]);
+            allitcboot = zeros([ size(itcboot) RetSearchDeskEEG.nbchan]);
+        end
+        allersp (:,:,elec) = ersp;
+        allitc (:,:,elec) = itc;
+        allpowbase (:,:,elec) = powbase;
+        alltimes (:,:,elec) = times;
+        allfreqs (:,:,elec) = freqs;
+        allerspboot (:,:,elec) = erspboot;
+        allitcboot (:,:,elec) = itcboot;
+    end
+    
+    % generate matricies for all patients
+    contRet_search_desk_ersp(:,:,:,Ci) = allersp;
+    contRet_search_desk_times(:,:,:,Ci) = alltimes;
+    contRet_search_desk_freqs(:,:,:,Ci) = allfreqs;
+    contRet_search_desk_boot(:,:,:,Ci) = allerspboot;
+
+end
+
+
+table_path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERSP';
+
+save(fullfile(table_path,'contEnc_mobi_ersp.mat'),'contEnc_mobi_ersp');
+save(fullfile(table_path,'contEnc_mobi_times.mat'),'contEnc_mobi_times');
+save(fullfile(table_path,'contEnc_mobi_freqs.mat'),'contEnc_mobi_freqs');
+save(fullfile(table_path,'contEnc_mobi_boot.mat'),'contEnc_mobi_boot');
+
+save(fullfile(table_path,'contRet_guess_mobi_ersp.mat'),'contRet_guess_mobi_ersp');
+save(fullfile(table_path,'contRet_guess_mobi_times.mat'),'contRet_guess_mobi_times');
+save(fullfile(table_path,'contRet_guess_mobi_freqs.mat'),'contRet_guess_mobi_freqs');
+save(fullfile(table_path,'contRet_guess_mobi_boot.mat'),'contRet_guess_mobi_boot');
+
+save(fullfile(table_path,'contRet_search_mobi_ersp.mat'),'contRet_search_mobi_ersp');
+save(fullfile(table_path,'contRet_search_mobi_times.mat'),'contRet_search_mobi_times');
+save(fullfile(table_path,'contRet_search_mobi_freqs.mat'),'contRet_search_mobi_freqs');
+save(fullfile(table_path,'contRet_search_mobi_boot.mat'),'contRet_search_mobi_boot');
+
+save(fullfile(table_path,'contEnc_desk_ersp.mat'),'contEnc_desk_ersp');
+save(fullfile(table_path,'contEnc_desk_times.mat'),'contEnc_desk_times');
+save(fullfile(table_path,'contEnc_desk_freqs.mat'),'contEnc_desk_freqs');
+save(fullfile(table_path,'contEnc_desk_boot.mat'),'contEnc_desk_boot');
+
+save(fullfile(table_path,'contRet_guess_desk_ersp.mat'),'contRet_guess_desk_ersp');
+save(fullfile(table_path,'contRet_guess_desk_times.mat'),'contRet_guess_desk_times');
+save(fullfile(table_path,'contRet_guess_desk_freqs.mat'),'contRet_guess_desk_freqs');
+save(fullfile(table_path,'contRet_guess_desk_boot.mat'),'contRet_guess_desk_boot');
+
+save(fullfile(table_path,'contRet_search_desk_ersp.mat'),'contRet_search_desk_ersp');
+save(fullfile(table_path,'contRet_search_desk_times.mat'),'contRet_search_desk_times');
+save(fullfile(table_path,'contRet_search_desk_freqs.mat'),'contRet_search_desk_freqs');
+save(fullfile(table_path,'contRet_search_desk_boot.mat'),'contRet_search_desk_boot');
+
+
+%% STEP 08.4: ERSP Plots
+
+% load the workspace
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERSP\1erspworkspace.mat')
+
+
+% seperate patient and control participants
+
+patients = [];
+controls = [];
+count_p = 1; % patients count
+count_c = 1; % controls count
+
+for Pi = 1:numel(participantsPreproc)
+    
+    subject = participantsPreproc(Pi);
+    
+    if contains(num2str(subject), '81') == 1
+        patients(count_p) = subject;
+        count_p = count_p + 1;
+    else 
+        controls(count_c) = subject;
+        count_c = count_c + 1;
+    
+    end    
+end
+
+
+
+
+% Patient Plots
+%-----------------------------------------------------------------------------------------------------
+
+
+% loop over patients
+for Pi = 1:numel(patients)
+    
+    
+    subject                  = patients(Pi);
+    participantFolder        = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedMobiFileNameEEG   = [num2str(subject') '_epoched_mobi.set'];
+    epochedDeskFileNameEEG   = [num2str(subject') '_epoched_desk.set'];
+    
+    epochedMobiEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedMobiFileNameEEG);
+    epochedDeskEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedDeskFileNameEEG);
+    
+    
+    
+    % MoBI
+    %---------------------------------------------------------------------
+      
+    % Encoding
+    
+    % generate matricies for selected participant
+    allersp(:,:,:) = patEnc_mobi_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patEnc_mobi_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patEnc_mobi_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patEnc_mobi_boot(:,:,:,Pi);
+    
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    f = figure(Pi);
+    set(gcf, 'Position', get(0, 'Screensize'));
+    sgtitle(num2str(subject),'fontweight','bold','fontsize',16)
+    subplot(2,3,1)
+    title('Encoding MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    % Retrieval (guess)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = patRet_guess_mobi_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patRet_guess_mobi_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patRet_guess_mobi_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patRet_guess_mobi_boot(:,:,:,Pi);
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,2)
+    title('Retrieval(guess) MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    
+    % Retrieval (search)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = patRet_search_mobi_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patRet_search_mobi_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patRet_search_mobi_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patRet_search_mobi_boot(:,:,:,Pi);
+    
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,3)
+    title('Retrieval(search) MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    
+    % Desktop
+    %----------------------------------------------------------------------
+    
+    % Encoding
+     
+    % generate matricies for selected participant
+    allersp(:,:,:) = patEnc_desk_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patEnc_desk_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patEnc_desk_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patEnc_desk_boot(:,:,:,Pi);
+
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,4)
+    title('Encoding Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold on
+    
+    % Retrieval (guess)   
+    
+    % generate matricies for selected participant
+    allersp(:,:,:) = patRet_guess_desk_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patRet_guess_desk_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patRet_guess_desk_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patRet_guess_desk_boot(:,:,:,Pi);
+
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,5)
+    title('Retrieval(guess) Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold on
+    
+    
+    % Retrieval (search)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = patRet_search_desk_ersp(:,:,:,Pi);
+    alltimes(:,:,:) = patRet_search_desk_times(:,:,:,Pi);
+    allfreqs(:,:,:) = patRet_search_desk_freqs(:,:,:,Pi);
+    allerspboot(:,:,:) = patRet_search_desk_boot(:,:,:,Pi);
+
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,6)
+    title('Retrieval(search) Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold off
+    
+    % save the figures
+    path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
+
+    saveas(f,fullfile(path,sprintf('ERSP1_Patient%d.png',Pi)));
+    
 end
 
 
 %%
 
-% calculate ERSP values for desktop
-
-for Pi = 1:numel(participantsPreproc)
+% loop over controls
+for Ci = 1:numel(controls)
     
-    subject = participantsPreproc(Pi);
-    input_path     = [bemobil_config.study_folder bemobil_config.single_subject_analysis_folder];
-    input_filename = [num2str(subject') '_epoched_desk.set'];
-    channels_to_use_for_study = 1:128;
-    output_foldername = '';
-    timewarp_latency_loadpath = NaN;
-    epochs_info_filename_input = NaN;
-    epochs_info_filename_output = NaN;
-    recompute = true;
-    has_timewarp_latencies = false;
-    dont_warp_but_cut = false;
-    n_freqs = 10;
-    n_times = 250;
+    
+    subject                  = controls(Ci);
+    participantFolder        = fullfile(bemobil_config.study_folder, bemobil_config.single_subject_analysis_folder, [num2str(subject)]);
+    epochedMobiFileNameEEG   = [num2str(subject') '_epoched_mobi.set'];
+    epochedDeskFileNameEEG   = [num2str(subject') '_epoched_desk.set'];
+    
+    epochedMobiEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedMobiFileNameEEG);
+    epochedDeskEEG =  pop_loadset('filepath', participantFolder ,'filename', epochedDeskFileNameEEG);
+    
+    
+    
+    % MoBI
+    %---------------------------------------------------------------------
+      
+    % Encoding
+    
+    % generate matricies for selected participant
+    allersp(:,:,:) = contEnc_mobi_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contEnc_mobi_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contEnc_mobi_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contEnc_mobi_boot(:,:,:,Ci);
+    
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    h = figure(Ci);
+    set(gcf, 'Position', get(0, 'Screensize'));
+    sgtitle(num2str(subject),'fontweight','bold','fontsize',16)
+    subplot(2,3,1)
+    title('Encoding MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    
+    % Retrieval (guess)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = contRet_guess_mobi_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contRet_guess_mobi_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contRet_guess_mobi_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contRet_guess_mobi_boot(:,:,:,Ci);
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,2)
+    title('Retrieval(guess) MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    
+    % Retrieval (search)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = contRet_search_mobi_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contRet_search_mobi_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contRet_search_mobi_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contRet_search_mobi_boot(:,:,:,Ci);
+    
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,3)
+    title('Retrieval(search) MoBI')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+    hold on
+    
+    
+    % Desktop
+    %----------------------------------------------------------------------
+    
+    % Encoding
+     
+    % generate matricies for selected participant
+    allersp(:,:,:) = contEnc_desk_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contEnc_desk_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contEnc_desk_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contEnc_desk_boot(:,:,:,Ci);
 
 
-    bemobil_compute_single_trial_ERSPs_channels(input_path , input_filename,  subject, channels_to_use_for_study,...
-      output_foldername, timewarp_latency_loadpath, epochs_info_filename_input, epochs_info_filename_output, recompute,...
-      0,dont_warp_but_cut, n_freqs, n_times )
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,4)
+    title('Encoding Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold on
+    
+    % Retrieval (guess)   
+    
+    % generate matricies for selected participant
+    allersp(:,:,:) = contRet_guess_desk_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contRet_guess_desk_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contRet_guess_desk_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contRet_guess_desk_boot(:,:,:,Ci);
 
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,5)
+    title('Retrieval(guess) Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold on
+    
+    
+    % Retrieval (search)
+
+    % generate matricies for selected participant
+    allersp(:,:,:) = contRet_search_desk_ersp(:,:,:,Ci);
+    alltimes(:,:,:) = contRet_search_desk_times(:,:,:,Ci);
+    allfreqs(:,:,:) = contRet_search_desk_freqs(:,:,:,Ci);
+    allerspboot(:,:,:) = contRet_search_desk_boot(:,:,:,Ci);
+
+
+    % Plot a tftopo() figure summarizing all the time/frequency transforms
+    subplot(2,3,6)
+    title('Retrieval(search) Desktop')
+    tftopo(allersp,alltimes(:,:,1),allfreqs(:,:,1),'mode','ave','limits',...
+    [nan nan nan 70 -1.5 1.5],'signifs', allerspboot, 'sigthresh', [6], 'timefreqs', ...
+    [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+    hold off
+    
+    % save the figures
+    path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
+
+    saveas(h,fullfile(path,sprintf('ERSP2_Control%d.png',Ci)));
+    
 end
 
+%%
+
+% Average Plots
+%--------------------------------------------------------------------------------------------------------------------------
+% select sample channel locations
+epochedMobiEEG = pop_loadset('81001_epoched_mobi.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+epochedDeskEEG = pop_loadset('81001_epoched_desk.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+
+
+% average over all participants
+%----------------------------------------------------
+
+
+% Patients - Encoding - Mobi
+
+f1 = figure(1);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patEnc_mobi_ersp,patEnc_mobi_times(:,:,1,1),patEnc_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patEnc_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Patients - Encoding Mobi','fontweight','bold','fontsize',16)
+
+% Patients - Retreival(guess) - Mobi
+
+f2 = figure(2);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patRet_guess_mobi_ersp,patRet_guess_mobi_times(:,:,1,1),patRet_guess_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Patients - Retrieval(guess) Mobi','fontweight','bold','fontsize',16)
+
+% Patients - Retrieval(search) - Mobi
+
+f3 = figure(3);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patRet_search_mobi_ersp,patRet_search_mobi_times(:,:,1,1),patRet_search_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Patients - Retrieval(search) Mobi','fontweight','bold','fontsize',16)
+
+%--------------------------------------------------------------
+
+% Patients - Encoding - Desktop
+
+f4 = figure(4);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patEnc_desk_ersp,patEnc_desk_times(:,:,1,1),patEnc_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patEnc_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Patients - Encoding Desktop','fontweight','bold','fontsize',16)
+
+
+% Patients - Retrieval(guess) - Desktop
+
+f5 = figure(5);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patRet_guess_desk_ersp,patRet_guess_desk_times(:,:,1,1),patRet_guess_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Patients - Retrieval(guess) Desktop','fontweight','bold','fontsize',16)
+
+% Patients - Retrieval(search) - Desktop
+
+f6 = figure(6);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(patRet_search_desk_ersp,patRet_search_desk_times(:,:,1,1),patRet_search_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Patients - Retrieval(search) Desktop','fontweight','bold','fontsize',16)
+
+%------------------------------------------------------------------
+
+% Controls - Encoding - Mobi
+
+f7 = figure(7);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contEnc_mobi_ersp,contEnc_mobi_times(:,:,1,1),contEnc_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contEnc_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Controls - Encoding Mobi','fontweight','bold','fontsize',16)
+
+
+% Controls - Retrieval(guess) - Mobi
+
+f8 = figure(8);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contRet_guess_mobi_ersp,contRet_guess_mobi_times(:,:,1,1),contRet_guess_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Controls - Retrieval(guess) Mobi','fontweight','bold','fontsize',16)
+
+
+% Controls - Retrieval(search) - Mobi
+
+f9 = figure(9);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contRet_search_mobi_ersp,contRet_search_mobi_times(:,:,1,1),contRet_search_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+sgtitle('Controls - Retrieval(search) Mobi','fontweight','bold','fontsize',16)
+
+%--------------------------------------------------------------
+
+% Controls - Encoding - Desktop
+
+f10 = figure(10);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contEnc_desk_ersp,contEnc_desk_times(:,:,1,1),contEnc_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contEnc_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Controls - Encoding Desktop','fontweight','bold','fontsize',16)
+
+% Controls - Retrieval(guess) - Desktop
+
+f11 = figure(11);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contRet_guess_desk_ersp,contRet_guess_desk_times(:,:,1,1),contRet_guess_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Controls - Retrieval(guess) Desktop','fontweight','bold','fontsize',16)
+
+% Controls - Retrieval(search) - Desktop
+
+f12 = figure(12);
+set(gcf, 'Position', get(0, 'Screensize'));
+tftopo(contRet_search_desk_ersp,contRet_search_desk_times(:,:,1,1),contRet_search_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+sgtitle('Controls - Retrieval(search) Desktop','fontweight','bold','fontsize',16)
+
+
+% save the figures
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
+
+f = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12];
+
+for i = 1:12
+   
+    
+    saveas(f(i),fullfile(path,[['ERSP3_Avg' num2str(i)],'.png']));
+
+end
