@@ -1,5 +1,4 @@
-function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3,...
-    var_epoch_ret_guess, var_epoch_ret_search, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline)
+function [variance_fm, variance_allEloc, erd_fm, erd_allEloc] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline)
 % it calculates the intertrial variance and ERD values of one participant 
 % and stores them in seperated matricies
 
@@ -175,7 +174,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         % encoding epochs:
         
         % iterate over encoding_all epochs
-        for e = 1:18
+        for e = 1:numel(encoding_all_epochs)
             for eloc = 1:128 % iterate over electrodes 
                     if session_idx == 1
                         enc_all_sqr_MoBI(eloc,:,e) = (epochedEEG.data(eloc,:,encoding_all_epochs(e)) - enc_all_avg_MoBI(eloc,:)).^2;
@@ -186,7 +185,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         end
         
         % iterate over encoding_2_3 epochs
-        for e = 1:12
+        for e = 1:numel(encoding_2_3_epochs)
             for eloc = 1:128 % iterate over electrodes 
                     if session_idx == 1
                         enc_2_3_sqr_MoBI(eloc,:,e) = (epochedEEG.data(eloc,:,encoding_2_3_epochs(e)) - enc_2_3_avg_MoBI(eloc,:)).^2;
@@ -201,7 +200,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         % retrieval epochs:
         
         % iterate over retrieval_guess epochs
-        for r = 1:24
+        for r = 1:numel(retrieval_guess_epochs)
             for eloc = 1:128 % iterate over electrodes 
                     if session_idx == 1
                         ret_guess_sqr_MoBI(eloc,:,r) = (epochedEEG.data(eloc,:,retrieval_guess_epochs(r)) - ret_guess_avg_MoBI(eloc,:)).^2;
@@ -212,7 +211,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         end
         
         % iterate over retrieval_search epochs
-        for r = 1:12
+        for r = 1:numel(retrieval_search_epochs)
             for eloc = 1:128 % iterate over electrodes 
                     if session_idx == 1
                         ret_search_sqr_MoBI(eloc,:,r) = (epochedEEG.data(eloc,:,retrieval_search_epochs(r)) - ret_search_avg_MoBI(eloc,:)).^2;
@@ -223,7 +222,7 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         end
         
         % iterate over retrieval_all epochs
-        for r = 1:36
+        for r = 1:numel(retrieval_all_epochs)
             for eloc = 1:128 % iterate over electrodes 
                     if session_idx == 1
                         ret_all_sqr_MoBI(eloc,:,r) = (epochedEEG.data(eloc,:,retrieval_all_epochs(r)) - ret_all_avg_MoBI(eloc,:)).^2;
@@ -248,11 +247,21 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         end
         
         
-        % calculate the number of baseline epochs in each session for later calculations
+        % calculate the number epochs in each session for later calculations
         if session_idx == 1
-            n_baseline_MoBI = numel(baseline_epochs);
+            n_baseline_MoBI   = numel(baseline_epochs);
+            n_enc_all_MoBI    = numel(encoding_all_epochs);
+            n_enc_2_3_MoBI    = numel(encoding_2_3_epochs);
+            n_ret_guess_MoBI  = numel(retrieval_guess_epochs);
+            n_ret_search_MoBI = numel(retrieval_search_epochs);
+            n_ret_all_MoBI    = numel(retrieval_all_epochs);
         else
-            n_baseline_Desk = numel(baseline_epochs);
+            n_baseline_Desk   = numel(baseline_epochs);
+            n_enc_all_Desk    = numel(encoding_all_epochs);
+            n_enc_2_3_Desk    = numel(encoding_2_3_epochs);
+            n_ret_guess_Desk  = numel(retrieval_guess_epochs);
+            n_ret_search_Desk = numel(retrieval_search_epochs);
+            n_ret_all_Desk    = numel(retrieval_all_epochs);
         end
          
         
@@ -263,34 +272,34 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
         
     
     % encoding_all-MoBI
-    variance_allEloc(:,:,1) = sum(enc_all_sqr_MoBI,3)/17;
+    variance_allEloc(:,:,1) = sum(enc_all_sqr_MoBI,3)/(n_enc_all_MoBI - 1);
         
     % encoding_all-Desk
-    variance_allEloc(:,:,2) = sum(enc_all_sqr_Desk,3)/17;
+    variance_allEloc(:,:,2) = sum(enc_all_sqr_Desk,3)/(n_enc_all_Desk - 1);
     
     % encoding_2_3-MoBI
-    variance_allEloc(:,:,3) = sum(enc_2_3_sqr_MoBI,3)/11;
+    variance_allEloc(:,:,3) = sum(enc_2_3_sqr_MoBI,3)/(n_enc_2_3_MoBI - 1);
         
     % encoding_2_3-Desk
-    variance_allEloc(:,:,4) = sum(enc_2_3_sqr_Desk,3)/11;
+    variance_allEloc(:,:,4) = sum(enc_2_3_sqr_Desk,3)/(n_enc_2_3_Desk - 1);
            
     % retrieval_guess-MoBI
-    variance_allEloc(:,:,5) = sum(ret_guess_sqr_MoBI,3)/23;
+    variance_allEloc(:,:,5) = sum(ret_guess_sqr_MoBI,3)/(n_ret_guess_MoBI - 1);
         
     % retrieval_guess-Desk
-    variance_allEloc(:,:,6) = sum(ret_guess_sqr_Desk,3)/23;
+    variance_allEloc(:,:,6) = sum(ret_guess_sqr_Desk,3)/(n_ret_guess_Desk - 1);
     
     % retrieval_search-MoBI
-    variance_allEloc(:,:,7) = sum(ret_search_sqr_MoBI,3)/11;
+    variance_allEloc(:,:,7) = sum(ret_search_sqr_MoBI,3)/(n_ret_search_MoBI - 1);
         
     % retrieval_search-Desk
-    variance_allEloc(:,:,8) = sum(ret_search_sqr_Desk,3)/11;
+    variance_allEloc(:,:,8) = sum(ret_search_sqr_Desk,3)/(n_ret_search_Desk - 1);
     
     % retrieval_all-MoBI
-    variance_allEloc(:,:,9) = sum(ret_all_sqr_MoBI,3)/35;
+    variance_allEloc(:,:,9) = sum(ret_all_sqr_MoBI,3)/(n_ret_all_MoBI - 1);
         
     % retrieval_all-Desk
-    variance_allEloc(:,:,10) = sum(ret_all_sqr_Desk,3)/35;
+    variance_allEloc(:,:,10) = sum(ret_all_sqr_Desk,3)/(n_ret_all_Desk - 1);
         
     % baseline-MoBI
     variance_allEloc(:,:,11) = sum(baseline_sqr_MoBI,3)/(n_baseline_MoBI - 1);
@@ -348,67 +357,6 @@ function [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all,
     %-------------------------------------------------------------------
     
     erd_fm(:,:,:) = erd_allEloc(eloc,:,:); 
-       
-    
-    
-    % 5. Create intertrial variance matricies without averaging over trials
-    %--------------------------------------------------------------------
-    
-    % take their average over time points and electrodes
-    % only interested electrodes
-    % Note: it is done for regression analysis in participant bases 
-    
-    
-    % var_epoch_enc:
-    % 1. column = encoding_all-MoBI
-    % 2. column = encoding_all-Desk
-    % 3. column = encoding_2_3-MoBI
-    % 4. column = encoding_2_3-Desk
-    
-    % var_epoch_ret:
-    % 1. column = retrieval_guess-MoBI
-    % 2. column = retrieval_guess-Desk
-    % 3. column = retireval_search-MoBI
-    % 4. column = retrieval_search-Desk
-    % 5. column = retireval_all-MoBI
-    % 6. column = retrieval_all-Desk
-    
-    for en = 1:18 % loop over encoding_all trials
-        
-        var_epoch_enc_all(en,1) = mean(enc_all_sqr_MoBI(eloc,:,en),'all');
-        var_epoch_enc_all(en,2) = mean(enc_all_sqr_Desk(eloc,:,en),'all');
-        
-    end
-    
-    for en = 1:12 % loop over encoding_2_3 trials
-        
-        var_epoch_enc_2_3(en,1) = mean(enc_2_3_sqr_MoBI(eloc,:,en),'all');
-        var_epoch_enc_2_3(en,2) = mean(enc_2_3_sqr_Desk(eloc,:,en),'all');
-        
-    end
-    
-    
-    for re = 1:24 % loop over retrieval_guess trials
-        
-        var_epoch_ret_guess(re,1) = mean(ret_guess_sqr_MoBI(eloc,:,re),'all');
-        var_epoch_ret_guess(re,2) = mean(ret_guess_sqr_Desk(eloc,:,re),'all');
-        
-    end
-    
-    for re = 1:12 % loop over retrieval_search trials
-        
-        var_epoch_ret_search(re,1) = mean(ret_search_sqr_MoBI(eloc,:,re),'all');
-        var_epoch_ret_search(re,2) = mean(ret_search_sqr_Desk(eloc,:,re),'all');
-        
-    end
-    
-    for re = 1:36 % loop over retrieval_all trials
-        
-        var_epoch_ret_all(re,1) = mean(ret_all_sqr_MoBI(eloc,:,re),'all');
-        var_epoch_ret_all(re,2) = mean(ret_all_sqr_Desk(eloc,:,re),'all');
-        
-    end    
-    
-    
+
     
 end

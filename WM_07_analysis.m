@@ -35,7 +35,7 @@ load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOv
 
 % Encoding (all) ANOVA
 
-groups = [repelem(1,10), repelem(2,18)]';
+groups = [repelem(1,10), repelem(2,20)]';
 
 en_all_mobi = [meanEloc_fm_pat(:,1); meanEloc_fm_cont(:,1)];
 en_all_desk = [meanEloc_fm_pat(:,2); meanEloc_fm_cont(:,2)];
@@ -121,7 +121,7 @@ rot_desk_180 = [rot_meanEloc_fm_p(:,4); rot_meanEloc_fm_c(:,4)];
 rot_mobi_270 = [rot_meanEloc_fm_p(:,6); rot_meanEloc_fm_c(:,6)];
 rot_desk_270 = [rot_meanEloc_fm_p(:,8); rot_meanEloc_fm_c(:,8)];
 
-groups = [repelem(1,10), repelem(2,18)]';
+groups = [repelem(1,10), repelem(2,20)]';
 
 rotation1_table = table(groups, rot_mobi_0, rot_desk_0, rot_mobi_90, rot_desk_90,...
     rot_mobi_180, rot_desk_180,rot_mobi_270, rot_desk_270,...
@@ -154,7 +154,7 @@ rotated_mobi = mean(rotated_mobi_all,2);
 rotated_desk = mean(rotated_desk_all,2);
 
 
-groups = [repelem(1,10), repelem(2,18)]';
+groups = [repelem(1,10), repelem(2,20)]';
 
 rotation2_table = table(groups, rotated_mobi, unrotated_mobi, rotated_desk, unrotated_desk,...
     'VariableNames', {'Group','RotatedMobi','UnrotatedMobi','RotatedDesk','UnrotatedDesk'});

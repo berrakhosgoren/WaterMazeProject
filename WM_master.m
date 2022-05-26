@@ -13,7 +13,7 @@ end
 
 
 % participant IDs for each loop 
-participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82010, 82011 83001:83003, 83006:83011];
+participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82010, 82011 83001:83003, 83006:83011, 83004];
 
 % configuration
 WM_config; 
@@ -155,7 +155,7 @@ for Pi = 1:numel(participantsPreproc)
     if ~exist(fullfile(participantFolder, epochedFileNameEEG), 'file') && ~exist(fullfile(participantFolder, epochedBaselineFileNameEEG), 'file')
         
         bandpassedEEG =  pop_loadset('filepath', participantFolder ,'filename', bandpassedFileNameEEG);        
-        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG);       
+        [epochedEEG, epochedEEG_baseline] = WM_03_epoch(bandpassedEEG); % use WM_03_epoch_83004 for participant 83004      
         pop_saveset(epochedEEG, 'filepath', participantFolder ,'filename', epochedFileNameEEG)
         pop_saveset(epochedEEG_baseline, 'filepath', participantFolder ,'filename', epochedBaselineFileNameEEG)
         
@@ -195,8 +195,7 @@ for Pi = 1:numel(participantsPreproc)
     % create different matricies for patients and controls
     if contains(num2str(subject), '81') == 1
      
-        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3,...
-            var_epoch_ret_guess, var_epoch_ret_search, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
+        [variance_fm, variance_allEloc, erd_fm, erd_allEloc] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
         
         varEnMobi_all_fm_pat(:,:,count_p)  = variance_fm(:,:,1);
         varEnDesk_all_fm_pat(:,:,count_p)  = variance_fm(:,:,2);
@@ -252,6 +251,9 @@ for Pi = 1:numel(participantsPreproc)
         erdRetMobi_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,9);
         erdRetDesk_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,10);
        
+        [var_epoch_enc_all, var_epoch_enc_2_3, var_epoch_ret_guess, var_epoch_ret_search,...
+            var_epoch_ret_all] = WM_04_variance(epochedEEG);
+        
         varEpoch_enc_all_Mobi_p(:,count_p) = var_epoch_enc_all(:,1);
         varEpoch_enc_all_Desk_p(:,count_p) = var_epoch_enc_all(:,2);
         varEpoch_enc_2_3_Mobi_p(:,count_p) = var_epoch_enc_2_3(:,1);
@@ -269,8 +271,7 @@ for Pi = 1:numel(participantsPreproc)
         
     else
         
-        [variance_fm, variance_allEloc, erd_fm, erd_allEloc, var_epoch_enc_all, var_epoch_enc_2_3,...
-            var_epoch_ret_guess, var_epoch_ret_search, var_epoch_ret_all] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
+        [variance_fm, variance_allEloc, erd_fm, erd_allEloc] = WM_04_ERD1_main(epochedEEG,epochedEEG_baseline);
         
         varEnMobi_all_fm_cont(:,:,count_c)  = variance_fm(:,:,1);
         varEnDesk_all_fm_cont(:,:,count_c)  = variance_fm(:,:,2);
@@ -326,18 +327,29 @@ for Pi = 1:numel(participantsPreproc)
         erdRetMobi_all_allEloc_cont(:,:,count_c)    = erd_allEloc(:,:,9);
         erdRetDesk_all_allEloc_cont(:,:,count_c)    = erd_allEloc(:,:,10);
        
-        varEpoch_enc_all_Mobi_c(:,count_c) = var_epoch_enc_all(:,1);
-        varEpoch_enc_all_Desk_c(:,count_c) = var_epoch_enc_all(:,2);
-        varEpoch_enc_2_3_Mobi_c(:,count_c) = var_epoch_enc_2_3(:,1);
-        varEpoch_enc_2_3_Desk_c(:,count_c) = var_epoch_enc_2_3(:,2);
         
-        varEpoch_ret_guess_Mobi_c(:,count_c)  = var_epoch_ret_guess(:,1);
-        varEpoch_ret_guess_Desk_c(:,count_c)  = var_epoch_ret_guess(:,2);
-        varEpoch_ret_search_Mobi_c(:,count_c) = var_epoch_ret_search(:,1);
-        varEpoch_ret_search_Desk_c(:,count_c) = var_epoch_ret_search(:,2);
-        varEpoch_ret_all_Mobi_c(:,count_c)    = var_epoch_ret_all(:,1);
-        varEpoch_ret_all_Desk_c(:,count_c)    = var_epoch_ret_all(:,2);
+        if subject == 83004
+            
+            % do nothing
         
+        else
+            
+            [var_epoch_enc_all, var_epoch_enc_2_3, var_epoch_ret_guess,var_epoch_ret_search,...
+                var_epoch_ret_all] = WM_04_variance(epochedEEG);
+            
+            varEpoch_enc_all_Mobi_c(:,count_c) = var_epoch_enc_all(:,1);
+            varEpoch_enc_all_Desk_c(:,count_c) = var_epoch_enc_all(:,2);
+            varEpoch_enc_2_3_Mobi_c(:,count_c) = var_epoch_enc_2_3(:,1);
+            varEpoch_enc_2_3_Desk_c(:,count_c) = var_epoch_enc_2_3(:,2);
+
+            varEpoch_ret_guess_Mobi_c(:,count_c)  = var_epoch_ret_guess(:,1);
+            varEpoch_ret_guess_Desk_c(:,count_c)  = var_epoch_ret_guess(:,2);
+            varEpoch_ret_search_Mobi_c(:,count_c) = var_epoch_ret_search(:,1);
+            varEpoch_ret_search_Desk_c(:,count_c) = var_epoch_ret_search(:,2);
+            varEpoch_ret_all_Mobi_c(:,count_c)    = var_epoch_ret_all(:,1);
+            varEpoch_ret_all_Desk_c(:,count_c)    = var_epoch_ret_all(:,2);
+        
+        end
         
         controls(count_c) = subject;  
         count_c = count_c + 1;
@@ -1670,12 +1682,25 @@ for Ci = 1:numel(controls)
     preprocessedFileNameEEG    = [num2str(subject') '_cleaned_with_ICA.set'];
     EEG                        =  pop_loadset('filepath', participantFolder ,'filename', preprocessedFileNameEEG);
     
-    [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral(EEG);
-    searchduration_all_controls(:,Ci) = search_duration_all;
-    searchduration_2_3_controls(:,Ci) = search_duration_2_3;
-    positions_controls(:,:,Ci)    = positions;
-    distance_error_controls(:,Ci) = distance_error;
-    
+    if subject == 83004
+        
+        [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral_83004(EEG);
+        
+        searchduration_all_83004 = search_duration_all;
+        searchduration_2_3_83004 = search_duration_2_3;
+        positions_83004          = positions;
+        distance_error_83004     = distance_error;
+        
+    else    
+        
+        [search_duration_all,search_duration_2_3,positions,distance_error] = WM_06_behavioral(EEG);
+        
+        searchduration_all_controls(:,Ci) = search_duration_all;
+        searchduration_2_3_controls(:,Ci) = search_duration_2_3;
+        positions_controls(:,:,Ci)    = positions;
+        distance_error_controls(:,Ci) = distance_error;
+        
+    end
 
 end
 
@@ -1691,6 +1716,12 @@ save(fullfile(table_path,'positions_patients.mat'), 'positions_patients');
 save(fullfile(table_path,'positions_controls.mat'), 'positions_controls');
 save(fullfile(table_path,'distance_error_patients.mat'), 'distance_error_patients');
 save(fullfile(table_path,'distance_error_controls.mat'), 'distance_error_controls');
+
+
+save(fullfile(table_path,'searchduration_all_83004.mat'), 'searchduration_all_83004');
+save(fullfile(table_path,'searchduration_2_3_83004.mat'), 'searchduration_2_3_83004');
+save(fullfile(table_path,'positions_83004.mat'), 'positions_83004');
+save(fullfile(table_path,'distance_error_83004.mat'), 'distance_error_83004');
 
 
 % Second: Regression Graphs

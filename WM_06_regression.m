@@ -4,6 +4,7 @@
 % load the data
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_all_patients.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_all_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_all_83004.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
 
@@ -15,6 +16,10 @@ duration_p_d_all = searchduration_all_patients(19:36,:);
 duration_c_m_all = searchduration_all_controls(1:18,:);
 duration_c_d_all = searchduration_all_controls(19:36,:);
 
+duration_83004_m_all = searchduration_all_83004(1:12,1);
+duration_83004_d_all = searchduration_all_83004(13:30,1);
+
+
 
 % take the mean value of each participant
 
@@ -24,8 +29,10 @@ meanDuration_p_d_all = mean(duration_p_d_all, 1);
 meanDuration_c_m_all = mean(duration_c_m_all, 1);
 meanDuration_c_d_all = mean(duration_c_d_all, 1);
 
+meanDuration_c_m_all(:,20) = mean(duration_83004_m_all, 1);
+meanDuration_c_d_all(:,20) = mean(duration_83004_d_all, 1);
 
-
+%
 % generate regression graph for all participants
 %-----------------------------------------------
 
@@ -95,6 +102,7 @@ saveas(f1,fullfile(path,'Regression1'),'png');
 % load the data
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_2_3_patients.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_2_3_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\searchduration_2_3_83004.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_pat.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOverEloc\meanEloc_fm_cont.mat')
 
@@ -106,6 +114,8 @@ duration_p_d_2_3 = searchduration_2_3_patients(13:24,:);
 duration_c_m_2_3 = searchduration_2_3_controls(1:12,:);
 duration_c_d_2_3 = searchduration_2_3_controls(13:24,:);
 
+duration_83004_m_2_3 = searchduration_2_3_83004(1:8,1);
+duration_83004_d_2_3 = searchduration_2_3_83004(9:20,1);
 
 % take the mean value of each participant
 
@@ -115,6 +125,8 @@ meanDuration_p_d_2_3 = mean(duration_p_d_2_3, 1);
 meanDuration_c_m_2_3 = mean(duration_c_m_2_3, 1);
 meanDuration_c_d_2_3 = mean(duration_c_d_2_3, 1);
 
+meanDuration_c_m_2_3(:,20) = mean(duration_83004_m_2_3, 1);
+meanDuration_c_d_2_3(:,20) = mean(duration_83004_d_2_3, 1);
 
 
 % generate regression graph for all participants
@@ -187,6 +199,7 @@ saveas(f2,fullfile(path,'Regression2'),'png');
 
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_patients.mat')
 load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_controls.mat')
+load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_83004.mat')
 
 
 % seperate them as mobi and desktop
@@ -203,6 +216,9 @@ distance_error_p_d = distance_error_patients(25:48,:);
 distance_error_c_m = distance_error_controls(1:24,:);
 distance_error_c_d = distance_error_controls(25:48,:);
 
+distance_error_83004_m = distance_error_83004(1:16,:);
+distance_error_83004_d = distance_error_83004(17:40,:);
+
 
 % take the mean value of each participant
 
@@ -211,6 +227,9 @@ meanDistance_error_p_d = mean(distance_error_p_d, 1);
 
 meanDistance_error_c_m = mean(distance_error_c_m, 1);
 meanDistance_error_c_d = mean(distance_error_c_d, 1);
+
+meanDistance_error_c_m(:,20) = mean(distance_error_83004_m, 1);
+meanDistance_error_c_d(:,20) = mean(distance_error_83004_d, 1);
 
 
 % generate regression graph for all participants
@@ -276,11 +295,6 @@ saveas(f3,fullfile(path,'Regression3'),'png');
 % 4. Distance Error - Frontal Midline Theta (Encoding(2&3)) Regression
 %-------------------------------------------------------------------------------
 
-% load the data
-
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_patients.mat')
-load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\Behavioral\distance_error_controls.mat')
-
 
 % seperate them as mobi and desktop
 
@@ -290,20 +304,6 @@ theta_p_d_2_3 = meanEloc_fm_pat(:,4);
 theta_c_m_2_3 = meanEloc_fm_cont(:,3);
 theta_c_d_2_3 = meanEloc_fm_cont(:,4);
 
-distance_error_p_m = distance_error_patients(1:24,:);
-distance_error_p_d = distance_error_patients(25:48,:);
-
-distance_error_c_m = distance_error_controls(1:24,:);
-distance_error_c_d = distance_error_controls(25:48,:);
-
-
-% take the mean value of each participant
-
-meanDistance_error_p_m = mean(distance_error_p_m, 1);
-meanDistance_error_p_d = mean(distance_error_p_d, 1);
-
-meanDistance_error_c_m = mean(distance_error_c_m, 1);
-meanDistance_error_c_d = mean(distance_error_c_d, 1);
 
 
 % generate regression graph for all participants
@@ -384,13 +384,6 @@ theta2_c_d_guess = meanEloc_fm_cont(:,6);
 % generate regression graph for all participants
 %-----------------------------------------------
 
-% take the mean value of each participant
-
-meanDistance_error_p_m = mean(distance_error_p_m, 1);
-meanDistance_error_p_d = mean(distance_error_p_d, 1);
-
-meanDistance_error_c_m = mean(distance_error_c_m, 1);
-meanDistance_error_c_d = mean(distance_error_c_d, 1);
 
 
 % generate the plots 
@@ -461,18 +454,6 @@ theta2_c_d_guess = meanEloc_fm_cont(:,8);
 
 
 
-% generate regression graph for all participants
-%-----------------------------------------------
-
-% take the mean value of each participant
-
-meanDistance_error_p_m = mean(distance_error_p_m, 1);
-meanDistance_error_p_d = mean(distance_error_p_d, 1);
-
-meanDistance_error_c_m = mean(distance_error_c_m, 1);
-meanDistance_error_c_d = mean(distance_error_c_d, 1);
-
-
 % generate the plots 
 
 f6 = figure(6);
@@ -541,19 +522,6 @@ theta2_c_m_all = meanEloc_fm_cont(:,9);
 theta2_c_d_all = meanEloc_fm_cont(:,10);
 
 
-
-% generate regression graph for all participants
-%-----------------------------------------------
-
-% take the mean value of each participant
-
-meanDistance_error_p_m = mean(distance_error_p_m, 1);
-meanDistance_error_p_d = mean(distance_error_p_d, 1);
-
-meanDistance_error_c_m = mean(distance_error_c_m, 1);
-meanDistance_error_c_d = mean(distance_error_c_d, 1);
-
-
 % generate the plots 
 
 f7 = figure(7);
@@ -620,7 +588,7 @@ load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\AverageOv
 
 
 patients = [81001:81004,81006:81011];
-controls = [82001:82004,82006:82008,84009,82011,83001:83003,83006:83011];
+controls = [82001:82004,82006:82008,84009,82010,82011,83001:83003,83006:83011];
 
 % iterate over patients
 for pi = 1:10
@@ -665,7 +633,7 @@ end
 
 
 % iterate over controls
-for ci = 1:18
+for ci = 1:19
 
 
     % 3. Control-MoBI
@@ -769,7 +737,7 @@ end
 
 
 % iterate over controls
-for ci = 1:18
+for ci = 1:19
 
 
     % 3. Control-MoBI
@@ -835,7 +803,7 @@ positions_controls_d = positions_controls(25:48,:,:);
 
 
 patients = [81001:81004,81006:81011];
-controls = [82001:82004,82006:82008,84009,82011,83001:83003,83006:83011];
+controls = [82001:82004,82006:82008,84009,82010,82011,83001:83003,83006:83011];
 
 path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
@@ -953,7 +921,7 @@ end
 
 
 % iterate over controls
-for ci = 1:18
+for ci = 1:19
     
     if rem(ci,2) == 1
         
@@ -1062,3 +1030,6 @@ for ci = 1:18
     end   
 
 end
+
+saveas(k,fullfile(path,'DistanceError15'),'png');
+
