@@ -13,7 +13,7 @@ end
 
 
 % participant IDs for each loop 
-participantsPreproc     = [81001:81004, 81006:81011, 82001:82004, 82006:82008, 84009, 82010, 82011 83001:83003, 83006:83011, 83004];
+participantsPreproc     = [81001,83003,81004,81006:81011,82001,82003,82004,82006:82008,84009,82010,82011,83001,83003,83006:83011,83004];
 
 % configuration
 WM_config; 
@@ -251,6 +251,7 @@ for Pi = 1:numel(participantsPreproc)
         erdRetMobi_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,9);
         erdRetDesk_all_allEloc_pat(:,:,count_p)    = erd_allEloc(:,:,10);
        
+        
         [var_epoch_enc_all, var_epoch_enc_2_3, var_epoch_ret_guess, var_epoch_ret_search,...
             var_epoch_ret_all] = WM_04_variance(epochedEEG);
         
@@ -258,14 +259,15 @@ for Pi = 1:numel(participantsPreproc)
         varEpoch_enc_all_Desk_p(:,count_p) = var_epoch_enc_all(:,2);
         varEpoch_enc_2_3_Mobi_p(:,count_p) = var_epoch_enc_2_3(:,1);
         varEpoch_enc_2_3_Desk_p(:,count_p) = var_epoch_enc_2_3(:,2);
-        
+
         varEpoch_ret_guess_Mobi_p(:,count_p)  = var_epoch_ret_guess(:,1);
         varEpoch_ret_guess_Desk_p(:,count_p)  = var_epoch_ret_guess(:,2);
         varEpoch_ret_search_Mobi_p(:,count_p) = var_epoch_ret_search(:,1);
         varEpoch_ret_search_Desk_p(:,count_p) = var_epoch_ret_search(:,2);
         varEpoch_ret_all_Mobi_p(:,count_p)    = var_epoch_ret_all(:,1);
         varEpoch_ret_all_Desk_p(:,count_p)    = var_epoch_ret_all(:,2);
-        
+            
+            
         patients(count_p) = subject;
         count_p = count_p + 1;
         
@@ -2624,145 +2626,287 @@ epochedDeskEEG = pop_loadset('81001_epoched_desk.set','C:\Users\BERRAK\Documents
 % average over all participants
 %----------------------------------------------------
 
-
-% Patients - Encoding - Mobi
+% Encoding
 
 f1 = figure(1);
 set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patEnc_mobi_ersp,patEnc_mobi_times(:,:,1,1),patEnc_mobi_freqs(:,:,1),'mode','ave','limits',...
+sgtitle('Encoding','fontweight','bold','fontsize',16)
+
+% Patients - Encoding - Mobi
+subplot(2,2,1)
+title('Patients - Mobi')
+tftopo(patEnc_mobi_ersp,patEnc_mobi_times(:,:,1,1),patEnc_mobi_freqs(:,:,1,1),'mode','ave','limits',...
 [nan nan nan 70 -1.5 1.5],'signifs', patEnc_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
 
-sgtitle('Patients - Encoding Mobi','fontweight','bold','fontsize',16)
-
-% Patients - Retreival(guess) - Mobi
-
-f2 = figure(2);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patRet_guess_mobi_ersp,patRet_guess_mobi_times(:,:,1,1),patRet_guess_mobi_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
-
-sgtitle('Patients - Retrieval(guess) Mobi','fontweight','bold','fontsize',16)
-
-% Patients - Retrieval(search) - Mobi
-
-f3 = figure(3);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patRet_search_mobi_ersp,patRet_search_mobi_times(:,:,1,1),patRet_search_mobi_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
-
-sgtitle('Patients - Retrieval(search) Mobi','fontweight','bold','fontsize',16)
-
-%--------------------------------------------------------------
-
 % Patients - Encoding - Desktop
-
-f4 = figure(4);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patEnc_desk_ersp,patEnc_desk_times(:,:,1,1),patEnc_desk_freqs(:,:,1),'mode','ave','limits',...
+subplot(2,2,2)
+title('Patients - Desktop')
+tftopo(patEnc_desk_ersp,patEnc_desk_times(:,:,1,1),patEnc_desk_freqs(:,:,1,1),'mode','ave','limits',...
 [nan nan nan 70 -1.5 1.5],'signifs', patEnc_desk_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
 
-sgtitle('Patients - Encoding Desktop','fontweight','bold','fontsize',16)
-
-
-% Patients - Retrieval(guess) - Desktop
-
-f5 = figure(5);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patRet_guess_desk_ersp,patRet_guess_desk_times(:,:,1,1),patRet_guess_desk_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
-
-sgtitle('Patients - Retrieval(guess) Desktop','fontweight','bold','fontsize',16)
-
-% Patients - Retrieval(search) - Desktop
-
-f6 = figure(6);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(patRet_search_desk_ersp,patRet_search_desk_times(:,:,1,1),patRet_search_desk_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
-
-sgtitle('Patients - Retrieval(search) Desktop','fontweight','bold','fontsize',16)
-
-%------------------------------------------------------------------
-
 % Controls - Encoding - Mobi
-
-f7 = figure(7);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contEnc_mobi_ersp,contEnc_mobi_times(:,:,1,1),contEnc_mobi_freqs(:,:,1),'mode','ave','limits',...
+subplot(2,2,3)
+title('Controls - Mobi')
+tftopo(contEnc_mobi_ersp,contEnc_mobi_times(:,:,1,1),contEnc_mobi_freqs(:,:,1,1),'mode','ave','limits',...
 [nan nan nan 70 -1.5 1.5],'signifs', contEnc_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
 
-sgtitle('Controls - Encoding Mobi','fontweight','bold','fontsize',16)
-
-
-% Controls - Retrieval(guess) - Mobi
-
-f8 = figure(8);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contRet_guess_mobi_ersp,contRet_guess_mobi_times(:,:,1,1),contRet_guess_mobi_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', contRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
-
-sgtitle('Controls - Retrieval(guess) Mobi','fontweight','bold','fontsize',16)
-
-
-% Controls - Retrieval(search) - Mobi
-
-f9 = figure(9);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contRet_search_mobi_ersp,contRet_search_mobi_times(:,:,1,1),contRet_search_mobi_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
-[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
-
-sgtitle('Controls - Retrieval(search) Mobi','fontweight','bold','fontsize',16)
-
-%--------------------------------------------------------------
-
 % Controls - Encoding - Desktop
-
-f10 = figure(10);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contEnc_desk_ersp,contEnc_desk_times(:,:,1,1),contEnc_desk_freqs(:,:,1),'mode','ave','limits',...
+subplot(2,2,4)
+title('Controls - Desktop')
+tftopo(contEnc_desk_ersp,contEnc_desk_times(:,:,1,1),contEnc_desk_freqs(:,:,1,1),'mode','ave','limits',...
 [nan nan nan 70 -1.5 1.5],'signifs', contEnc_desk_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
 
-sgtitle('Controls - Encoding Desktop','fontweight','bold','fontsize',16)
+
+% Retrieval (guess)
+
+f2 = figure(2);
+set(gcf, 'Position', get(0, 'Screensize'));
+sgtitle('Retrieval(guess)','fontweight','bold','fontsize',16)
+
+% Patients - Retreival(guess) - Mobi
+subplot(2,2,1)
+title('Patients - Mobi')
+tftopo(patRet_guess_mobi_ersp,patRet_guess_mobi_times(:,:,1,1),patRet_guess_mobi_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Patients - Retrieval(guess) - Desktop
+subplot(2,2,2)
+title('Patients - Desktop')
+tftopo(patRet_guess_desk_ersp,patRet_guess_desk_times(:,:,1,1),patRet_guess_desk_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+% Controls - Retrieval(guess) - Mobi
+subplot(2,2,3)
+title('Controls - Mobi')
+tftopo(contRet_guess_mobi_ersp,contRet_guess_mobi_times(:,:,1,1),contRet_guess_mobi_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
 
 % Controls - Retrieval(guess) - Desktop
-
-f11 = figure(11);
-set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contRet_guess_desk_ersp,contRet_guess_desk_times(:,:,1,1),contRet_guess_desk_freqs(:,:,1),'mode','ave','limits',...
+subplot(2,2,4)
+title('Controls - Desktop')
+tftopo(contRet_guess_desk_ersp,contRet_guess_desk_times(:,:,1,1),contRet_guess_desk_freqs(:,:,1,1),'mode','ave','limits',...
 [nan nan nan 70 -1.5 1.5],'signifs', contRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
 
-sgtitle('Controls - Retrieval(guess) Desktop','fontweight','bold','fontsize',16)
 
-% Controls - Retrieval(search) - Desktop
+% Retrieval (search)
 
-f12 = figure(12);
+f3 = figure(3);
 set(gcf, 'Position', get(0, 'Screensize'));
-tftopo(contRet_search_desk_ersp,contRet_search_desk_times(:,:,1,1),contRet_search_desk_freqs(:,:,1),'mode','ave','limits',...
-[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+sgtitle('Patients - Retrieval(search) Mobi','fontweight','bold','fontsize',16)
+
+% Patients - Retrieval(search) - Mobi
+subplot(2,2,1)
+title('Patients - Mobi')
+tftopo(patRet_search_mobi_ersp,patRet_search_mobi_times(:,:,1,1),patRet_search_mobi_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Patients - Retrieval(search) - Desktop
+subplot(2,2,2)
+title('Patients - Desktop')
+tftopo(patRet_search_desk_ersp,patRet_search_desk_times(:,:,1,1),patRet_search_desk_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', patRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
 [400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
 
-sgtitle('Controls - Retrieval(search) Desktop','fontweight','bold','fontsize',16)
+% Controls - Retrieval(search) - Mobi
+subplot(2,2,3)
+title('Controls - Mobi')
+tftopo(contRet_search_mobi_ersp,contRet_search_mobi_times(:,:,1,1),contRet_search_mobi_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Controls - Retrieval(search) - Desktop
+subplot(2,2,4)
+title('Controls - Desktop')
+tftopo(contRet_search_desk_ersp,contRet_search_desk_times(:,:,1,1),contRet_search_desk_freqs(:,:,1,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', contRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
 
 
 % save the figures
 path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
 
-f = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12];
+f = [f1,f2,f3];
 
-for i = 1:12
+for i = 1:3
    
     
     saveas(f(i),fullfile(path,[['ERSP3_Avg' num2str(i)],'.png']));
+
+end
+
+%% STEP 8.5: Difference ERSP Plots
+
+%load('C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Tables\ERSP\1erspworkspace.mat')
+
+% take average of the participants
+
+patEnc_mobi_ersp = mean(patEnc_mobi_ersp, 4);
+patRet_guess_mobi_ersp = mean(patRet_guess_mobi_ersp, 4);
+patRet_search_mobi_ersp = mean(patRet_search_mobi_ersp, 4);
+patEnc_desk_ersp = mean(patEnc_desk_ersp, 4);
+patRet_guess_desk_ersp = mean(patRet_guess_desk_ersp, 4);
+patRet_search_desk_ersp = mean(patRet_search_desk_ersp, 4);
+
+contEnc_mobi_ersp = mean(contEnc_mobi_ersp, 4);
+contRet_guess_mobi_ersp = mean(contRet_guess_mobi_ersp, 4);
+contRet_search_mobi_ersp = mean(contRet_search_mobi_ersp, 4);
+contEnc_desk_ersp = mean(contEnc_desk_ersp, 4);
+contRet_guess_desk_ersp = mean(contRet_guess_desk_ersp, 4);
+contRet_search_desk_ersp = mean(contRet_search_desk_ersp, 4);
+
+
+patEnc_mobi_boot = mean(patEnc_mobi_boot, 4);
+patRet_guess_mobi_boot = mean(patRet_guess_mobi_boot, 4);
+patRet_search_mobi_boot = mean(patRet_search_mobi_boot, 4);
+patEnc_desk_boot = mean(patEnc_desk_boot, 4);
+patRet_guess_desk_boot = mean(patRet_guess_desk_boot, 4);
+patRet_search_desk_boot = mean(patRet_search_desk_boot, 4);
+
+contEnc_mobi_boot = mean(contEnc_mobi_boot, 4);
+contRet_guess_mobi_boot = mean(contRet_guess_mobi_boot, 4);
+contRet_search_mobi_boot = mean(contRet_search_mobi_boot, 4);
+contEnc_desk_boot = mean(contEnc_desk_boot, 4);
+contRet_guess_desk_boot = mean(contRet_guess_desk_boot, 4);
+contRet_search_desk_boot = mean(contRet_search_desk_boot, 4);
+
+
+% creat 3D matricies for times and frequencies
+
+n_patEnc_mobi_times(:,:,:) = patEnc_mobi_times(:,:,:,1);
+n_patRet_guess_mobi_times(:,:,:) = patRet_guess_mobi_times(:,:,:,1);
+n_patRet_search_mobi_times(:,:,:) = patRet_search_mobi_times(:,:,:,1);
+n_patEnc_desk_times(:,:,:) = patEnc_desk_times(:,:,:,1);
+n_patRet_guess_desk_times(:,:,:) = patRet_guess_desk_times(:,:,:,1);
+n_patRet_search_desk_times(:,:,:) = patRet_search_desk_times(:,:,:,1);
+
+n_contEnc_mobi_times(:,:,:) = contEnc_mobi_times(:,:,:,1);
+n_contRet_guess_mobi_times(:,:,:) = contRet_guess_mobi_times(:,:,:,1);
+n_contRet_search_mobi_times(:,:,:) = contRet_search_mobi_times(:,:,:,1);
+n_contEnc_desk_times(:,:,:) = contEnc_desk_times(:,:,:,1);
+n_contRet_guess_desk_times(:,:,:) = contRet_guess_desk_times(:,:,:,1);
+n_contRet_search_desk_times(:,:,:) = contRet_search_desk_times(:,:,:,1);
+
+
+n_patEnc_mobi_freqs(:,:,:) = patEnc_mobi_freqs(:,:,:,1);
+n_patRet_guess_mobi_freqs(:,:,:) = patRet_guess_mobi_freqs(:,:,:,1);
+n_patRet_search_mobi_freqs(:,:,:) = patRet_search_mobi_freqs(:,:,:,1);
+n_patEnc_desk_freqs(:,:,:) = patEnc_desk_freqs(:,:,:,1);
+n_patRet_guess_desk_freqs(:,:,:) = patRet_guess_desk_freqs(:,:,:,1);
+n_patRet_search_desk_freqs(:,:,:) = patRet_search_desk_freqs(:,:,:,1);
+
+n_contEnc_mobi_freqs(:,:,:) = contEnc_mobi_freqs(:,:,:,1);
+n_contRet_guess_mobi_freqs(:,:,:) = contRet_guess_mobi_freqs(:,:,:,1);
+n_contRet_search_mobi_freqs(:,:,:) = contRet_search_mobi_freqs(:,:,:,1);
+n_contEnc_desk_freqs(:,:,:) = contEnc_desk_freqs(:,:,:,1);
+n_contRet_guess_desk_freqs(:,:,:) = contRet_guess_desk_freqs(:,:,:,1);
+n_contRet_search_desk_freqs(:,:,:) = contRet_search_desk_freqs(:,:,:,1);
+
+% create difference matrices 
+% substruct patients from controls 
+
+
+difEnc_mobi_ersp = contEnc_mobi_ersp - patEnc_mobi_ersp;
+difRet_guess_mobi_ersp = contRet_guess_mobi_ersp - patRet_guess_mobi_ersp;
+difRet_search_mobi_ersp = contRet_search_mobi_ersp - patRet_search_mobi_ersp;
+difEnc_desk_ersp = contEnc_desk_ersp - patEnc_desk_ersp;
+difRet_guess_desk_ersp = contRet_guess_desk_ersp - patRet_guess_desk_ersp;
+difRet_search_desk_ersp = contRet_search_desk_ersp - patRet_search_desk_ersp;
+
+difEnc_mobi_boot = contEnc_mobi_boot - patEnc_mobi_boot;
+difRet_guess_mobi_boot = contRet_guess_mobi_boot - patRet_guess_mobi_boot;
+difRet_search_mobi_boot = contRet_search_mobi_boot - patRet_search_mobi_boot;
+difEnc_desk_boot = contEnc_desk_boot - patEnc_desk_boot;
+difRet_guess_desk_boot = contRet_guess_desk_boot - patRet_guess_desk_boot;
+difRet_search_desk_boot = contRet_search_desk_boot - patRet_search_desk_boot;
+
+
+% select sample channel locations
+epochedMobiEEG = pop_loadset('81001_epoched_mobi.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+epochedDeskEEG = pop_loadset('81001_epoched_desk.set','C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Data\5_single-subject-EEG-analysis\81001');
+
+
+% average over all participants
+%----------------------------------------------------
+
+% Encoding
+
+f1 = figure('units','normalized','outerposition',[0 0 0.4 1]);
+sgtitle('Difference ERSPs - Encoding','fontweight','bold','fontsize',16)
+
+% Encoding - Mobi
+subplot(2,1,1)
+title('Mobi')
+tftopo(difEnc_mobi_ersp,n_patEnc_mobi_times(:,:,1),n_patEnc_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difEnc_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Encoding - Desktop
+subplot(2,1,2)
+title('Desktop')
+tftopo(difEnc_desk_ersp,n_patEnc_desk_times(:,:,1),n_patEnc_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difEnc_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+
+
+% Retrieval (guess)
+
+f2 = figure('units','normalized','outerposition',[0 0 0.4 1]);
+sgtitle('Difference ERSPs - Retrieval(guess)','fontweight','bold','fontsize',16)
+
+% Retreival(guess) - Mobi
+subplot(2,1,1)
+title('Mobi')
+tftopo(difRet_guess_mobi_ersp,n_patRet_guess_mobi_times(:,:,1),n_patRet_guess_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difRet_guess_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Retrieval(guess) - Desktop
+subplot(2,1,2)
+title('Desktop')
+tftopo(difRet_guess_desk_ersp,n_patRet_guess_desk_times(:,:,1),n_patRet_guess_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difRet_guess_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+
+
+% Retrieval (search)
+
+f3 = figure('units','normalized','outerposition',[0 0 0.4 1]);
+sgtitle('Difference ERSPs - Retrieval(search)','fontweight','bold','fontsize',16)
+
+% Retrieval(search) - Mobi
+subplot(2,1,1)
+title('Mobi')
+tftopo(difRet_search_mobi_ersp,n_patRet_search_mobi_times(:,:,1),n_patRet_search_mobi_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difRet_search_mobi_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedMobiEEG.chanlocs);
+
+% Retrieval(search) - Desktop
+subplot(2,1,2)
+title('Desktop')
+tftopo(difRet_search_desk_ersp, n_patRet_search_desk_times(:,:,1),n_patRet_search_desk_freqs(:,:,1),'mode','ave','limits',...
+[nan nan nan 70 -1.5 1.5],'signifs', difRet_search_desk_boot, 'sigthresh', [6], 'timefreqs', ...
+[400 8; 350 14; 500 24; 1050 11], 'chanlocs', epochedDeskEEG.chanlocs);
+
+
+% save the figures
+path = 'C:\Users\BERRAK\Documents\GitHub\WaterMazeProject\Results\Graphs';
+
+f = [f1,f2,f3];
+
+for i = 1:3
+   
+    
+    saveas(f(i),fullfile(path,[['ERSP4_difference' num2str(i)],'.png']));
 
 end
